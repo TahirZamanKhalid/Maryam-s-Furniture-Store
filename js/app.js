@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             initializeApp();
             loadCategories();
+            loadFeaturedProducts();
             loadProducts();
             loadDeals();
             setupEventListeners();
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         initializeApp();
         loadCategories();
+        loadFeaturedProducts();
         loadProducts();
         loadDeals();
         setupEventListeners();
@@ -240,13 +242,87 @@ function updateCategoryFilter(categories) {
     filter.innerHTML = options.join('');
 }
 
+// Load featured products from Firebase
+function loadFeaturedProducts() {
+    if (typeof database === 'undefined') {
+        console.error('Database not initialized');
+        return;
+    }
+
+    const productsRef = database.ref('products');
+    productsRef.on('value', snapshot => {
+        const products = snapshot.val() || {};
+        const featuredProducts = Object.values(products).filter(prod =>
+            prod.status === 'active' && prod.featured === true
+        );
+        displayFeaturedProducts(featuredProducts);
+    });
+}
+
+// Display featured products
+function displayFeaturedProducts(products) {
+    const grid = document.getElementById('featuredProductsGrid');
+    if (!grid) return;
+
+    if (products.length === 0) {
+        grid.innerHTML = '<p class="text-center" style="grid-column: 1/-1">No featured products available</p>';
+        return;
+    }
+
+    // Limit to 8 featured products
+    const productsToShow = products.slice(0, 8);
+
+    grid.innerHTML = productsToShow.map((product, index) => {
+        const discount = product.originalPrice ?
+            Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
+        return `
+            <div class="product-card" data-product-id="${product.id}"
+                 style="animation-delay: ${index * 0.1}s">
+                ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
+                <div class="featured-badge">⭐ Featured</div>
+                <div style="overflow: hidden; height: 250px;">
+                    <img src="${product.images?.[0] || 'placeholder.jpg'}"
+                         alt="${product.name}"
+                         class="product-image"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0f0f0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-description">${product.description || ''}</p>
+                    <div class="product-price">
+                        <span class="price">Rs. ${product.price.toLocaleString()}</span>
+                        ${product.originalPrice ?
+                            `<span class="original-price">Rs. ${product.originalPrice.toLocaleString()}</span>` : ''}
+                    </div>
+                    ${product.rating ? `
+                        <div class="product-rating">
+                            ${generateStars(product.rating)}
+                            <span>(${product.reviews || 0})</span>
+                        </div>
+                    ` : ''}
+                    <div class="product-actions">
+                        <button class="btn-add-cart" onclick="addToCart('${product.id}')">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn-wishlist ${appState.wishlist && appState.wishlist.some(w => w.id === product.id) ? 'active' : ''}"
+                                onclick="toggleWishlist('${product.id}')">
+                            <i class="${appState.wishlist && appState.wishlist.some(w => w.id === product.id) ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 // Load products from Firebase
 function loadProducts() {
     if (typeof database === 'undefined') {
         console.error('Database not initialized');
         return;
     }
-    
+
     const productsRef = database.ref('products');
     productsRef.on('value', snapshot => {
         const products = snapshot.val() || {};
@@ -254,7 +330,7 @@ function loadProducts() {
         currentProducts = Object.values(products).filter(prod => prod.status === 'active');
         filteredProducts = currentProducts;
         displayProducts();
-        
+
         // Update category product counts after products are loaded
         if (appState.categories && Object.keys(appState.categories).length > 0) {
             updateCategoryProductCounts(appState.categories);

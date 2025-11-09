@@ -623,6 +623,19 @@ body.dark-theme .header {
     font-size: 0.85rem;
 }
 
+.featured-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
 .product-actions,
 .deal-actions {
     display: flex;
