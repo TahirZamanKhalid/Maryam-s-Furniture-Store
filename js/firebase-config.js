@@ -321,8 +321,10 @@ function loadUserCart(userId) {
         const cartData = snapshot.val();
         if (cartData) {
             appState.cart = Object.values(cartData);
-            updateCartCount();
+        } else {
+            appState.cart = []; // Clear cart if empty
         }
+        updateCartCount();
     });
 }
 
@@ -333,8 +335,10 @@ function loadUserWishlist(userId) {
         const wishlistData = snapshot.val();
         if (wishlistData) {
             appState.wishlist = Object.values(wishlistData);
-            updateWishlistUI();
+        } else {
+            appState.wishlist = []; // Clear wishlist if empty
         }
+        updateWishlistUI();
     });
 }
 
