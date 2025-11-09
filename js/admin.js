@@ -732,9 +732,13 @@ function openDealModal(dealId = null) {
           document.getElementById('dealPrice').value = deal.price;
           document.getElementById('dealStock').value = deal.stock || 10;
           document.getElementById('dealImage').value = deal.image;
+          if (deal.startTime) {
+              const startDate = new Date(deal.startTime);
+              document.getElementById('dealStartTime').value = startDate.toISOString().slice(0, 16);
+          }
           if (deal.endTime) {
-              const date = new Date(deal.endTime);
-              document.getElementById('dealEndTime').value = date.toISOString().slice(0, 16);
+              const endDate = new Date(deal.endTime);
+              document.getElementById('dealEndTime').value = endDate.toISOString().slice(0, 16);
           }
           document.getElementById('dealStatus').value = deal.status;
           dealIdInput.value = dealId;
@@ -748,6 +752,7 @@ function openDealModal(dealId = null) {
       document.getElementById('dealPrice').value = '';
       document.getElementById('dealStock').value = '10';
       document.getElementById('dealImage').value = '';
+      document.getElementById('dealStartTime').value = '';
       document.getElementById('dealEndTime').value = '';
       document.getElementById('dealStatus').value = 'active';
       dealIdInput.value = '';
@@ -780,6 +785,7 @@ async function saveDealData(event) {
   const price = parseFloat(document.getElementById('dealPrice').value);
   const stock = parseInt(document.getElementById('dealStock').value);
   const image = document.getElementById('dealImage').value.trim();
+  const startTimeInput = document.getElementById('dealStartTime').value;
   const endTimeInput = document.getElementById('dealEndTime').value;
   const status = document.getElementById('dealStatus').value;
 
@@ -794,6 +800,10 @@ async function saveDealData(event) {
       status,
       updatedAt: Date.now()
   };
+
+  if (startTimeInput) {
+      dealData.startTime = new Date(startTimeInput).getTime();
+  }
 
   if (endTimeInput) {
       dealData.endTime = new Date(endTimeInput).getTime();
