@@ -160,10 +160,11 @@ function initializeWebsite() {
     // Initialize advertisement carousel
     initAdCarousel();
 
-    // Set up keyboard shortcut for admin login (Ctrl+Shift+A)
+    // Set up keyboard shortcut for admin login (Ctrl+Space)
     document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-            openAdminModal();
+        if (e.ctrlKey && e.key === ' ') {
+            e.preventDefault();
+            openAdminLoginModal();
         }
     });
 
@@ -368,25 +369,25 @@ function initAdCarousel() {
 }
 
 // Admin Login Modal
-function openAdminModal() {
+function openAdminLoginModal() {
     const modal = document.getElementById('adminLoginModal');
     if (modal) {
-        modal.classList.remove('hidden');
+        modal.classList.add('active');
     }
 }
 
-function closeAdminModal() {
+function closeAdminLoginModal() {
     const modal = document.getElementById('adminLoginModal');
     if (modal) {
-        modal.classList.add('hidden');
+        modal.classList.remove('active');
     }
 }
 
 function handleAdminLogin(event) {
     event.preventDefault();
 
-    const email = document.getElementById('adminEmail').value;
-    const password = document.getElementById('adminPassword').value;
+    const email = document.getElementById('adminLoginEmail').value;
+    const password = document.getElementById('adminLoginPassword').value;
 
     // Admin authentication with Firebase
     if (typeof firebase !== 'undefined' && firebase.auth) {
@@ -402,38 +403,38 @@ function handleAdminLogin(event) {
                         console.log('User data from database:', userData);
 
                         if (userData && userData.role === 'admin') {
-                            showNotification('Admin login successful!', 'success');
+                            showToast('Admin login successful!', 'success');
                             // Redirect to admin dashboard
                             setTimeout(() => {
-                                window.location.href = 'admin-dashboard.html';
+                                window.location.href = 'admin.html';
                             }, 1000);
                         } else {
                             // If no user data exists, show helpful error
                             if (!userData) {
                                 console.error('No user data found at path: users/' + user.uid);
-                                showNotification('User data not found in database. Please create admin user with role="admin" at users/' + user.uid, 'error');
+                                showToast('User data not found in database. Please create admin user with role="admin" at users/' + user.uid, 'error');
                             } else if (!userData.role) {
                                 console.error('No role field found in user data:', userData);
-                                showNotification('User role not set. Please add role="admin" field to user data', 'error');
+                                showToast('User role not set. Please add role="admin" field to user data', 'error');
                             } else {
                                 console.error('User role is not admin:', userData.role);
-                                showNotification('Access denied. Admin privileges required. Current role: ' + userData.role, 'error');
+                                showToast('Access denied. Admin privileges required. Current role: ' + userData.role, 'error');
                             }
                             firebase.auth().signOut();
                         }
                     })
                     .catch((dbError) => {
                         console.error('Database error:', dbError);
-                        showNotification('Database error: ' + dbError.message, 'error');
+                        showToast('Database error: ' + dbError.message, 'error');
                         firebase.auth().signOut();
                     });
             })
             .catch((error) => {
                 console.error('Authentication error:', error);
-                showNotification('Login failed: ' + error.message, 'error');
+                showToast('Login failed: ' + error.message, 'error');
             });
     } else {
-        showNotification('Firebase not configured', 'error');
+        showToast('Firebase not configured', 'error');
     }
 
     return false;
@@ -770,7 +771,7 @@ window.onclick = function(event) {
     const shopTourModal = document.getElementById('shopTourModal');
     const categoryVideoModal = document.getElementById('categoryVideoModal');
     const adminModal = document.getElementById('adminLoginModal');
-    
+
     if (event.target === shopTourModal) {
         closeShopTour();
     }
@@ -778,7 +779,7 @@ window.onclick = function(event) {
         closeCategoryVideo();
     }
     if (event.target === adminModal) {
-        closeAdminModal();
+        closeAdminLoginModal();
     }
 };
 
