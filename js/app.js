@@ -333,15 +333,25 @@ function loadProducts() {
 // Display products
 function displayProducts() {
     const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-    
+    if (!grid) {
+        console.error('Products grid not found');
+        return;
+    }
+
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
     const productsToShow = filteredProducts.slice(startIndex, endIndex);
-    
+
+    console.log('Displaying products:', {
+        totalFiltered: filteredProducts.length,
+        currentPage: currentPage,
+        showing: productsToShow.length
+    });
+
     if (productsToShow.length === 0) {
         grid.innerHTML = '<p class="text-center" style="grid-column: 1/-1">No products found</p>';
-        document.getElementById('loadMoreContainer').style.display = 'none';
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        if (loadMoreContainer) loadMoreContainer.style.display = 'none';
         return;
     }
     
@@ -477,20 +487,34 @@ function sortProducts() {
 // Search products
 function searchProducts() {
     const searchInput = document.getElementById('searchInput');
+    if (!searchInput) {
+        console.error('Search input not found');
+        return;
+    }
+
     const query = searchInput.value.toLowerCase().trim();
-    
+    console.log('Searching for:', query);
+
     if (!query) {
         filteredProducts = currentProducts;
+        console.log('Empty search, showing all', currentProducts.length, 'products');
     } else {
-        filteredProducts = currentProducts.filter(product => 
+        filteredProducts = currentProducts.filter(product =>
             product.name.toLowerCase().includes(query) ||
-            product.description?.toLowerCase().includes(query)
+            product.description?.toLowerCase().includes(query) ||
+            product.category?.toLowerCase().includes(query)
         );
+        console.log('Found', filteredProducts.length, 'products matching:', query);
     }
-    
+
     currentPage = 1;
     displayProducts();
     scrollToSection('products');
+
+    // Show feedback if no results
+    if (query && filteredProducts.length === 0) {
+        showToast(`No products found for "${query}"`, 'info');
+    }
 }
 
 // Load deals from Firebase
