@@ -1,5 +1,5 @@
 // Firebase Configuration and Initialization
-// Maryam's Furniture Shop - Real-time Database Management
+// Elite Furniture Gallery Shop - Real-time Database Management
 
 const firebaseConfig = {
     apiKey: "AIzaSyCNwRyfXqXGasKTqQrOCp55eOcQYOShw8Y",
@@ -165,7 +165,7 @@ function initializeDatabaseStructure() {
     dbRefs.settings.once('value', snapshot => {
         if (!snapshot.exists()) {
             const defaultSettings = {
-                storeName: "Maryam's Furniture Shop",
+                storeName: "Elite Furniture Gallery Shop",
                 currency: 'PKR',
                 deliveryFee: 500,
                 freeDeliveryThreshold: 50000,

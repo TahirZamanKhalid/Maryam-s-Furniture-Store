@@ -1,4 +1,4 @@
-// EmailJS Configuration for Maryam's Furniture Shop
+// EmailJS Configuration for Elite Furniture Gallery Shop
 // Email: ba5304831@gmail.com
 
 // IMPORTANT: Replace these with your actual EmailJS credentials

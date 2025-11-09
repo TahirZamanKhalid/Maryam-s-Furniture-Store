@@ -1,5 +1,5 @@
 // Main Application JavaScript
-// Maryam's Furniture Shop
+// Elite Furniture Gallery Shop
 
 // Global variables
 let currentProducts = [];
