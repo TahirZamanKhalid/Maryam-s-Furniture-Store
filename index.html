@@ -146,13 +146,31 @@
     </section>
 
     <!-- Featured Products Section -->
+    <section id="featured" class="featured-products-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span>⭐ Featured Products</span>
+                <div class="title-line"></div>
+            </h2>
+
+            <div class="products-grid" id="featuredProductsGrid">
+                <div class="product-skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Products Section -->
     <section id="products" class="products-section">
         <div class="container">
             <h2 class="section-title">
-                <span>Featured Products</span>
+                <span>All Products</span>
                 <div class="title-line"></div>
             </h2>
-            
+
             <!-- Filters -->
             <div class="filters">
                 <select id="categoryFilter" onchange="filterProducts()">
@@ -172,7 +190,7 @@
                     <option value="name">Name: A to Z</option>
                 </select>
             </div>
-            
+
             <div class="products-grid" id="productsGrid">
                 <div class="product-skeleton">
                     <div class="skeleton-img"></div>
@@ -180,7 +198,7 @@
                     <div class="skeleton-text short"></div>
                 </div>
             </div>
-            
+
             <div class="load-more-container" id="loadMoreContainer" style="display: none;">
                 <button class="load-more-btn" onclick="loadMoreProducts()">
                     Load More Products
