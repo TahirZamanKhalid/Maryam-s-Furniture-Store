@@ -1,5 +1,5 @@
 // Orders Page JavaScript
-// Maryam's Furniture Shop
+// Elite Furniture Gallery Shop
 
 let isDarkTheme = localStorage.getItem('theme') === 'dark';
 let currentUser = null;

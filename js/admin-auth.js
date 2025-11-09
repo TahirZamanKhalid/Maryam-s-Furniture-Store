@@ -1,5 +1,5 @@
 // Admin Authentication JavaScript
-// Maryam's Furniture Shop - Admin Login Only
+// Elite Furniture Gallery Shop - Admin Login Only
 
 let isDarkTheme = localStorage.getItem('theme') === 'dark';
 

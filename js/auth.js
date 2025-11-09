@@ -1,5 +1,5 @@
 // User Authentication JavaScript - Clean Rewrite
-// Maryam's Furniture Shop - Regular User Login/Signup ONLY
+// Elite Furniture Gallery Shop - Regular User Login/Signup ONLY
 
 let isDarkTheme = localStorage.getItem('theme') === 'dark';
 let isAuthenticating = false; // Flag to prevent auth state checks during login/signup

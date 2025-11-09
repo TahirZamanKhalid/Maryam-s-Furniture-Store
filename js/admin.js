@@ -1,5 +1,5 @@
 // Admin Panel JavaScript - Fixed Version
-// Maryam's Furniture Shop
+// Elite Furniture Gallery Shop
 
 // Check admin authentication
 document.addEventListener('DOMContentLoaded', () => {
@@ -645,7 +645,7 @@ async function loadSettings() {
       const settings = snapshot.val();
       
       if (settings) {
-          document.getElementById('storeName').value = settings.storeName || "Maryam's Furniture Shop";
+          document.getElementById('storeName').value = settings.storeName || "Elite Furniture Gallery Shop";
           document.getElementById('currency').value = settings.currency || 'PKR';
           document.getElementById('deliveryFee').value = settings.deliveryFee || 500;
       }
@@ -703,12 +703,119 @@ function filterAdminProducts() {}
 function searchAdminProducts() {}
 function filterOrders() {}
 function searchCustomers() {}
-function openDealModal() { showToast('Deal modal coming soon', 'info'); }
+
+function openDealModal(dealId = null) {
+  const modal = document.getElementById('dealModal');
+  const title = document.getElementById('dealModalTitle');
+  const dealIdInput = document.getElementById('dealId');
+
+  // Populate category dropdown
+  database.ref('categories').once('value', snapshot => {
+      const categories = snapshot.val() || {};
+      const categorySelect = document.getElementById('dealCategory');
+      categorySelect.innerHTML = '<option value="">Select Category</option>';
+      Object.entries(categories).forEach(([id, cat]) => {
+          if (cat.status === 'active') {
+              categorySelect.innerHTML += `<option value="${id}">${cat.name}</option>`;
+          }
+      });
+  });
+
+  if (dealId) {
+      title.textContent = 'Edit Deal';
+      database.ref(`deals/${dealId}`).once('value', snapshot => {
+          const deal = snapshot.val();
+          document.getElementById('dealName').value = deal.name;
+          document.getElementById('dealCategory').value = deal.category;
+          document.getElementById('dealDescription').value = deal.description;
+          document.getElementById('dealOriginalPrice').value = deal.originalPrice;
+          document.getElementById('dealPrice').value = deal.price;
+          document.getElementById('dealStock').value = deal.stock || 10;
+          document.getElementById('dealImage').value = deal.image;
+          if (deal.endTime) {
+              const date = new Date(deal.endTime);
+              document.getElementById('dealEndTime').value = date.toISOString().slice(0, 16);
+          }
+          document.getElementById('dealStatus').value = deal.status;
+          dealIdInput.value = dealId;
+      });
+  } else {
+      title.textContent = 'Add Deal';
+      document.getElementById('dealName').value = '';
+      document.getElementById('dealCategory').value = '';
+      document.getElementById('dealDescription').value = '';
+      document.getElementById('dealOriginalPrice').value = '';
+      document.getElementById('dealPrice').value = '';
+      document.getElementById('dealStock').value = '10';
+      document.getElementById('dealImage').value = '';
+      document.getElementById('dealEndTime').value = '';
+      document.getElementById('dealStatus').value = 'active';
+      dealIdInput.value = '';
+  }
+
+  modal.classList.add('active');
+}
+
+function closeDealModal() {
+  document.getElementById('dealModal').classList.remove('active');
+}
+
 function editDeal(id) { openDealModal(id); }
+
 function deleteDeal(id) {
   if (confirm('Delete this deal?')) {
       database.ref(`deals/${id}`).remove();
       showToast('Deal deleted', 'success');
+  }
+}
+
+async function saveDealData(event) {
+  event.preventDefault();
+
+  const dealId = document.getElementById('dealId').value;
+  const name = document.getElementById('dealName').value.trim();
+  const category = document.getElementById('dealCategory').value;
+  const description = document.getElementById('dealDescription').value.trim();
+  const originalPrice = parseFloat(document.getElementById('dealOriginalPrice').value);
+  const price = parseFloat(document.getElementById('dealPrice').value);
+  const stock = parseInt(document.getElementById('dealStock').value);
+  const image = document.getElementById('dealImage').value.trim();
+  const endTimeInput = document.getElementById('dealEndTime').value;
+  const status = document.getElementById('dealStatus').value;
+
+  const dealData = {
+      name,
+      category,
+      description,
+      originalPrice,
+      price,
+      stock,
+      image,
+      status,
+      updatedAt: Date.now()
+  };
+
+  if (endTimeInput) {
+      dealData.endTime = new Date(endTimeInput).getTime();
+  }
+
+  try {
+      if (dealId) {
+          // Update existing deal
+          await database.ref(`deals/${dealId}`).update(dealData);
+          showToast('Deal updated successfully', 'success');
+      } else {
+          // Create new deal
+          const newDealRef = database.ref('deals').push();
+          dealData.id = newDealRef.key;
+          dealData.createdAt = Date.now();
+          await newDealRef.set(dealData);
+          showToast('Deal created successfully', 'success');
+      }
+      closeDealModal();
+  } catch (error) {
+      console.error('Error saving deal:', error);
+      showToast('Failed to save deal', 'error');
   }
 }
 
@@ -727,8 +834,10 @@ window.saveProductData = saveProductData;
 window.filterAdminProducts = filterAdminProducts;
 window.searchAdminProducts = searchAdminProducts;
 window.openDealModal = openDealModal;
+window.closeDealModal = closeDealModal;
 window.editDeal = editDeal;
 window.deleteDeal = deleteDeal;
+window.saveDealData = saveDealData;
 window.updateOrderStatus = updateOrderStatus;
 window.deleteOrder = deleteOrder;
 window.filterOrders = filterOrders;
