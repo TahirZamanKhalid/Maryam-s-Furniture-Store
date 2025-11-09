@@ -1,4 +1,4 @@
-// Authentication JavaScript
+// Authentication JavaScript - Fixed Version
 // Maryam's Furniture Shop
 
 let isDarkTheme = localStorage.getItem('theme') === 'dark';
@@ -18,26 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
         switchTab('signup');
     }
     
-    // Check if user is already logged in (only on login.html page)
-    // Don't redirect if we're already on index.html or other pages
-    // Don't redirect if user just completed login/signup (prevent circular redirects)
-    if (window.location.pathname.includes('login.html')) {
-        // Check if user just logged in/signed up in this session
-        const justAuthenticated = sessionStorage.getItem('justAuthenticated');
-        
-        // If user just authenticated, clear the flag and don't redirect
-        if (justAuthenticated) {
-            sessionStorage.removeItem('justAuthenticated');
-            return;
-        }
-        
+    // Check if this is an admin login attempt
+    const adminLoginRequired = sessionStorage.getItem('adminLoginRequired');
+    
+    // Only check for existing login if NOT coming from admin redirect
+    if (!adminLoginRequired && window.location.pathname.includes('login.html')) {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // Small delay to ensure this isn't a fresh signup/login
+                // Wait a bit to ensure this isn't a fresh login
                 setTimeout(async () => {
-                    // Check again if user just authenticated during the delay
+                    // Check if user just authenticated
                     if (sessionStorage.getItem('justAuthenticated')) {
-                        sessionStorage.removeItem('justAuthenticated');
                         return;
                     }
                     
@@ -51,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         showToast('Admin already logged in! Redirecting...', 'info');
                         setTimeout(() => {
                             window.location.href = 'admin.html';
-                        }, 1500);
+                        }, 1000);
                     } else {
                         // Regular user - redirect to home
                         showToast('You are already logged in! Redirecting...', 'info');
                         setTimeout(() => {
                             window.location.href = 'index.html';
-                        }, 1500);
+                        }, 1000);
                     }
                 }, 500);
             }
@@ -111,15 +102,6 @@ async function handleLogin(event) {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // Check if email is verified
-        if (!user.emailVerified) {
-            showToast('Please verify your email address first. Check your inbox.', 'warning');
-            
-            // Send verification email again
-            await user.sendEmailVerification();
-            showToast('Verification email sent again.', 'info');
-        }
-        
         // Get user data from database
         const userRef = database.ref(`users/${user.uid}`);
         const snapshot = await userRef.once('value');
@@ -130,19 +112,21 @@ async function handleLogin(event) {
             lastLogin: Date.now()
         });
         
+        // Set flag to prevent redirect loop
+        sessionStorage.setItem('justAuthenticated', 'true');
+        
+        // Clear admin login required flag
+        sessionStorage.removeItem('adminLoginRequired');
+        
         if (userData && userData.role === 'admin') {
             // Admin user - redirect to admin panel
             showToast('Admin login successful! Redirecting...', 'success');
-            // Set flag to prevent redirect loop
-            sessionStorage.setItem('justAuthenticated', 'true');
             setTimeout(() => {
                 window.location.href = 'admin.html';
             }, 1000);
         } else {
             // Regular user - redirect to home
             showToast('Login successful! Redirecting...', 'success');
-            // Set flag to prevent redirect loop
-            sessionStorage.setItem('justAuthenticated', 'true');
             setTimeout(() => {
                 const redirectTo = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
                 sessionStorage.removeItem('redirectAfterLogin');
@@ -244,7 +228,6 @@ async function handleSignup(event) {
         
         // User is already logged in after signup (Firebase auto-login)
         // Redirect to home page after a short delay
-        // Don't wait for email verification - user can verify later
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1500);

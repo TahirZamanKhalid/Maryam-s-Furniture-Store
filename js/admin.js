@@ -1,44 +1,90 @@
-// Admin Panel JavaScript - Complete Version
+// Admin Panel JavaScript - Fixed Version
 // Maryam's Furniture Shop
 
 // Check admin authentication
 document.addEventListener('DOMContentLoaded', () => {
   checkAdminAuth();
-  loadDashboardData();
-  loadCategories();
-  loadProducts();
-  loadDeals();
-  loadOrders();
-  loadCustomers();
-  loadSettings();
 });
 
 // Check if user is admin
 function checkAdminAuth() {
+  // Show loading state
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.id = 'adminLoading';
+  loadingOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+  `;
+  loadingOverlay.innerHTML = `
+    <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #3498db;"></i>
+    <p style="margin-top: 1rem; color: #2c3e50; font-size: 1.1rem;">Verifying admin access...</p>
+  `;
+  document.body.appendChild(loadingOverlay);
+  
   auth.onAuthStateChanged(async (user) => {
       if (!user) {
           showToast('Please login as admin', 'error');
+          // Set flag to prevent redirect loop
+          sessionStorage.setItem('adminLoginRequired', 'true');
+          setTimeout(() => {
+              window.location.href = 'login.html';
+          }, 1000);
+          return;
+      }
+      
+      try {
+          // Get user data from database
+          const userRef = database.ref(`users/${user.uid}`);
+          const snapshot = await userRef.once('value');
+          const userData = snapshot.val();
+          
+          if (!userData || userData.role !== 'admin') {
+              showToast('Access denied. Admin privileges required.', 'error');
+              await auth.signOut();
+              sessionStorage.removeItem('adminLoginRequired');
+              setTimeout(() => {
+                  window.location.href = 'index.html';
+              }, 1500);
+              return;
+          }
+          
+          // Admin verified - load admin panel
+          document.getElementById('adminEmail').textContent = user.email;
+          
+          // Remove loading overlay
+          if (loadingOverlay && loadingOverlay.parentNode) {
+              loadingOverlay.remove();
+          }
+          
+          // Clear any redirect flags
+          sessionStorage.removeItem('adminLoginRequired');
+          sessionStorage.removeItem('justAuthenticated');
+          
+          // Load admin data
+          loadDashboardData();
+          loadCategories();
+          loadProducts();
+          loadDeals();
+          loadOrders();
+          loadCustomers();
+          loadSettings();
+          
+      } catch (error) {
+          console.error('Admin auth error:', error);
+          showToast('Authentication error', 'error');
           setTimeout(() => {
               window.location.href = 'login.html';
           }, 1500);
-          return;
       }
-      
-      // Get user data from database
-      const userRef = database.ref(`users/${user.uid}`);
-      const snapshot = await userRef.once('value');
-      const userData = snapshot.val();
-      
-      if (!userData || userData.role !== 'admin') {
-          showToast('Access denied. Admin privileges required.', 'error');
-          setTimeout(() => {
-              window.location.href = 'index.html';
-          }, 1500);
-          return;
-      }
-      
-      // Update admin email display
-      document.getElementById('adminEmail').textContent = user.email;
   });
 }
 
@@ -647,7 +693,8 @@ function toggleMaintenanceMode() {
 function adminLogout() {
   if (confirm('Logout?')) {
       auth.signOut().then(() => {
-          window.location.href = 'login.html';
+          sessionStorage.clear();
+          window.location.href = 'index.html';
       });
   }
 }

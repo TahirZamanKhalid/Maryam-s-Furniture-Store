@@ -685,6 +685,13 @@ async function handleAdminLogin(event) {
         
         showToast('Admin login successful! Redirecting...', 'success');
         
+        // Set flag to prevent redirect loops
+        sessionStorage.setItem('justAuthenticated', 'true');
+        sessionStorage.removeItem('adminLoginRequired');
+        
+        // Close modal
+        closeAdminLoginModal();
+        
         // Redirect to admin panel
         setTimeout(() => {
             window.location.href = 'admin.html';
