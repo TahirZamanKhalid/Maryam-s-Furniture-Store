@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login or Sign Up - Maryam's Furniture Shop">
+    <title>Login / Sign Up - Maryam's Furniture Shop</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' x='50' text-anchor='middle' font-size='60'%3E🛋️%3C/text%3E%3C/svg%3E">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-couch"></i>
+                <span>Maryam's Furniture</span>
+            </a>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Shop</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="tab-btn" onclick="switchTab('signup')">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginTab" class="tab-content active">
+                <h2>Welcome Back!</h2>
+                <p class="subtitle">Login to your account to continue shopping</p>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" onclick="showForgotPassword()" class="forgot-link">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="social-login">
+                    <button onclick="loginWithGoogle()" class="btn-social google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                    <button onclick="loginWithFacebook()" class="btn-social facebook">
+                        <i class="fab fa-facebook"></i> Continue with Facebook
+                    </button>
+                </div>
+                
+                <p class="switch-form">
+                    Don't have an account? 
+                    <a href="#" onclick="switchTab('signup')">Sign up here</a>
+                </p>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signupTab" class="tab-content">
+                <h2>Create Account</h2>
+                <p class="subtitle">Join us for exclusive offers and deals</p>
+                
+                <form id="signupForm" onsubmit="handleSignup(event)">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="signupName">
+                                <i class="fas fa-user"></i> Full Name
+                            </label>
+                            <input type="text" id="signupName" placeholder="Enter your name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupPhone">
+                                <i class="fas fa-phone"></i> Phone Number
+                            </label>
+                            <input type="tel" id="signupPhone" placeholder="+92 300 1234567" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupEmail">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                        <span class="error-text" id="emailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="signupPassword" placeholder="Create a strong password" 
+                               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('signupPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <small>At least 8 characters with uppercase, lowercase and numbers</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('signupConfirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <span class="error-text" id="passwordMatchError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupAddress">
+                            <i class="fas fa-map-marker-alt"></i> Delivery Address
+                        </label>
+                        <textarea id="signupAddress" placeholder="Enter your complete address" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span>I agree to the <a href="#">Terms & Conditions</a></span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="social-login">
+                    <button onclick="signupWithGoogle()" class="btn-social google">
+                        <i class="fab fa-google"></i> Sign up with Google
+                    </button>
+                    <button onclick="signupWithFacebook()" class="btn-social facebook">
+                        <i class="fab fa-facebook"></i> Sign up with Facebook
+                    </button>
+                </div>
+                
+                <p class="switch-form">
+                    Already have an account? 
+                    <a href="#" onclick="switchTab('login')">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content small">
+            <span class="close" onclick="closeForgotPassword()">&times;</span>
+            <h3><i class="fas fa-key"></i> Reset Password</h3>
+            <p>Enter your email address and we'll send you a link to reset your password.</p>
+            
+            <form onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <input type="email" id="resetEmail" placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

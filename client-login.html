@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maryam's Furniture - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f5f2;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .logo {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .logo p {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .auth-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .auth-links a, .auth-links button {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        
+        .auth-links button.active {
+            background-color: #e67e22;
+            color: white;
+        }
+        
+        .auth-links a:hover, .auth-links button:hover {
+            opacity: 0.8;
+        }
+        
+        .content {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        .welcome-section {
+            flex: 1;
+            max-width: 500px;
+            display: none;
+        }
+
+        .welcome-section.active {
+            display: block;
+        }
+        
+        .welcome-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .welcome-section p {
+            font-size: 18px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+        
+        .form-container {
+            flex: 1;
+            max-width: 450px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .form-container.hidden {
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: #e67e22;
+            outline: none;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #e67e22;
+            font-size: 12px;
+        }
+        
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .auth-btn:hover:not(:disabled) {
+            background-color: #d35400;
+        }
+
+        .auth-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .password-group {
+            position: relative;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #28a745;
+            color: white;
+        }
+
+        .notification.error {
+            background: #dc3545;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #e67e22;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .welcome-section, .form-container {
+                max-width: 100%;
+            }
+            
+            header {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Maryam's Furniture</h1>
+            <p>Crafting Your Dream Space</p>
+        </div>
+        <div class="auth-links">
+            <button id="loginTabBtn" class="active" onclick="switchTab('login')">Login</button>
+            <button id="signupTabBtn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="content">
+            <!-- Login Welcome -->
+            <div class="welcome-section active" id="loginWelcome">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your account to continue crafting your dream space with Maryam's Furniture. Access your saved designs, order history, and personalized recommendations.</p>
+            </div>
+
+            <!-- Signup Welcome -->
+            <div class="welcome-section" id="signupWelcome">
+                <h2>Join Us Today</h2>
+                <p>Create an account with Maryam's Furniture to start your journey. Get exclusive access to special offers, track your orders, and build your dream furniture collection.</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="form-container active" id="loginForm">
+                <form id="loginFormElement" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        <small id="loginEmailError"></small>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <small id="loginPasswordError"></small>
+                    </div>
+
+                    <div class="forgot-password">
+                        <a href="#" onclick="showForgotPasswordModal(event)">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn" id="loginBtn">Sign In</button>
+                </form>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="form-container hidden" id="signupForm">
+                <form id="signupFormElement" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                        <small id="signupNameError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                        <small id="signupEmailError"></small>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a strong password (min 6 characters)" required minlength="6">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('signupPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <small id="signupPasswordError"></small>
+                    </div>
+
+                    <div class="form-group password-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('signupConfirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <small id="signupConfirmPasswordError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPhone">Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+                        <small id="signupPhoneError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupCity">City</label>
+                        <input type="text" id="signupCity" placeholder="Enter your city" required>
+                        <small id="signupCityError"></small>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn" id="signupBtn">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 Maryam's Furniture. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script>
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const type = field.type === 'password' ? 'text' : 'password';
+            field.type = type;
+        }
+
+        // Switch between login and signup tabs
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginWelcome = document.getElementById('loginWelcome');
+            const signupWelcome = document.getElementById('signupWelcome');
+            const loginTabBtn = document.getElementById('loginTabBtn');
+            const signupTabBtn = document.getElementById('signupTabBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginWelcome.classList.add('active');
+                signupWelcome.classList.remove('active');
+                loginTabBtn.classList.add('active');
+                signupTabBtn.classList.remove('active');
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupWelcome.classList.add('active');
+                loginWelcome.classList.remove('active');
+                signupTabBtn.classList.add('active');
+                loginTabBtn.classList.remove('active');
+            }
+        }
+
+        // Handle Login
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Validation
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+
+            // Firebase Authentication
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    showNotification('Login successful!', 'success');
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        // Check if user is admin
+                        firebase.database().ref('users/' + user.uid).once('value')
+                            .then((snapshot) => {
+                                const userData = snapshot.val();
+                                if (userData && userData.role === 'admin') {
+                                    window.location.href = 'admin-dashboard.html';
+                                } else {
+                                    window.location.href = 'index.html';
+                                }
+                            })
+                            .catch(() => {
+                                window.location.href = 'index.html';
+                            });
+                    }, 1000);
+                })
+                .catch((error) => {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+
+                    let errorMessage = 'Login failed';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Incorrect password';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed login attempts. Try again later';
+                    }
+
+                    showNotification(errorMessage, 'error');
+                });
+        }
+
+        // Handle Signup
+        function handleSignup(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const phone = document.getElementById('signupPhone').value.trim();
+            const city = document.getElementById('signupCity').value.trim();
+            const signupBtn = document.getElementById('signupBtn');
+
+            // Validation
+            if (!name || !email || !password || !confirmPassword || !phone || !city) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            // Show loading state
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating Account...';
+
+            // Create Firebase account
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    // Save user data to database
+                    return firebase.database().ref('users/' + user.uid).set({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        city: city,
+                        role: 'user',  // Default role
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    }).then(() => user);
+                })
+                .then((user) => {
+                    // Send verification email
+                    return user.sendEmailVerification().then(() => user);
+                })
+                .then((user) => {
+                    showNotification('Account created! Please verify your email.', 'success');
+                    
+                    // Clear form
+                    document.getElementById('signupFormElement').reset();
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                })
+                .catch((error) => {
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = 'Create Account';
+
+                    let errorMessage = 'Signup failed';
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'Email already registered. Please login instead.';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak. Use uppercase, lowercase, numbers.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address';
+                    }
+
+                    showNotification(errorMessage, 'error');
+                });
+        }
+
+        // Show forgot password modal
+        function showForgotPasswordModal(event) {
+            event.preventDefault();
+            const email = prompt('Enter your email address:');
+            if (!email) return;
+
+            firebase.auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    showNotification('Password reset email sent! Check your inbox.', 'success');
+                })
+                .catch((error) => {
+                    let errorMessage = 'Error sending reset email';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address';
+                    }
+                    showNotification(errorMessage, 'error');
+                });
+        }
+
+        // Check if user is already logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

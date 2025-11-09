@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - Maryam's Furniture Shop">
+    <title>Admin Dashboard - Maryam's Furniture Shop</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' x='50' text-anchor='middle' font-size='60'%3E⚙️%3C/text%3E%3C/svg%3E">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+</head>
+<body class="admin-page">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-cog"></i>
+            <h2>Admin Panel</h2>
+            <p id="adminEmail">admin@example.com</p>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" onclick="switchAdminTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#categories" class="nav-item" onclick="switchAdminTab('categories')">
+                <i class="fas fa-list"></i> Categories
+            </a>
+            <a href="#products" class="nav-item" onclick="switchAdminTab('products')">
+                <i class="fas fa-box"></i> Products
+            </a>
+            <a href="#deals" class="nav-item" onclick="switchAdminTab('deals')">
+                <i class="fas fa-percentage"></i> Deals
+            </a>
+            <a href="#orders" class="nav-item" onclick="switchAdminTab('orders')">
+                <i class="fas fa-shopping-bag"></i> Orders
+            </a>
+            <a href="#customers" class="nav-item" onclick="switchAdminTab('customers')">
+                <i class="fas fa-users"></i> Customers
+            </a>
+            <a href="#settings" class="nav-item" onclick="switchAdminTab('settings')">
+                <i class="fas fa-sliders-h"></i> Settings
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="window.location.href='index.html'" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Shop
+            </button>
+            <button onclick="adminLogout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="admin-section active">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalOrders">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalRevenue">Rs. 0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalCustomers">0</h3>
+                        <p>Total Customers</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalProducts">0</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-orders">
+                <h2>Recent Orders</h2>
+                <div id="recentOrdersList"></div>
+            </div>
+        </section>
+        
+        <!-- Categories Section -->
+        <section id="categoriesSection" class="admin-section">
+            <div class="section-header">
+                <h1><i class="fas fa-list"></i> Categories Management</h1>
+                <button onclick="openCategoryModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Category
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Icon</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Products</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesList">
+                        <tr>
+                            <td colspan="6" class="text-center">Loading categories...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Products Section -->
+        <section id="productsSection" class="admin-section">
+            <div class="section-header">
+                <h1><i class="fas fa-box"></i> Products Management</h1>
+                <button onclick="openProductModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </div>
+            
+            <div class="filters">
+                <select id="productCategoryFilter" onchange="filterAdminProducts()">
+                    <option value="">All Categories</option>
+                </select>
+                <input type="text" id="productSearch" placeholder="Search products..." onkeyup="searchAdminProducts()">
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsList">
+                        <tr>
+                            <td colspan="7" class="text-center">Loading products...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Deals Section -->
+        <section id="dealsSection" class="admin-section">
+            <div class="section-header">
+                <h1><i class="fas fa-percentage"></i> Deals Management</h1>
+                <button onclick="openDealModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Deal
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Original Price</th>
+                            <th>Deal Price</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dealsList">
+                        <tr>
+                            <td colspan="7" class="text-center">Loading deals...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Orders Section -->
+        <section id="ordersSection" class="admin-section">
+            <h1><i class="fas fa-shopping-bag"></i> Orders Management</h1>
+            
+            <div class="filters">
+                <select id="orderStatusFilter" onchange="filterOrders()">
+                    <option value="">All Orders</option>
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="date" id="orderDateFilter" onchange="filterOrders()">
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersList">
+                        <tr>
+                            <td colspan="6" class="text-center">Loading orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Customers Section -->
+        <section id="customersSection" class="admin-section">
+            <h1><i class="fas fa-users"></i> Customers Management</h1>
+            
+            <div class="filters">
+                <input type="text" id="customerSearch" placeholder="Search customers..." onkeyup="searchCustomers()">
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Orders</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersList">
+                        <tr>
+                            <td colspan="6" class="text-center">Loading customers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Settings Section -->
+        <section id="settingsSection" class="admin-section">
+            <h1><i class="fas fa-sliders-h"></i> Store Settings</h1>
+            
+            <div class="settings-grid">
+                <div class="setting-card">
+                    <h3>Store Information</h3>
+                    <form onsubmit="updateStoreSettings(event)">
+                        <div class="form-group">
+                            <label>Store Name</label>
+                            <input type="text" id="storeName" value="Maryam's Furniture Shop">
+                        </div>
+                        <div class="form-group">
+                            <label>Currency</label>
+                            <select id="currency">
+                                <option value="PKR">PKR</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery Fee</label>
+                            <input type="number" id="deliveryFee" value="500">
+                        </div>
+                        <button type="submit" class="btn-primary">Save Settings</button>
+                    </form>
+                </div>
+                
+                <div class="setting-card">
+                    <h3>Admin Settings</h3>
+                    <button onclick="exportData()" class="btn-secondary">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button onclick="clearCache()" class="btn-secondary">
+                        <i class="fas fa-trash"></i> Clear Cache
+                    </button>
+                    <button onclick="toggleMaintenanceMode()" class="btn-warning">
+                        <i class="fas fa-tools"></i> Maintenance Mode
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modals -->
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCategoryModal()">&times;</span>
+            <h2 id="categoryModalTitle">Add Category</h2>
+            
+            <form onsubmit="saveCategoryData(event)">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    <input type="text" id="categoryIcon" placeholder="e.g., 🛋️" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" id="categorySlug" placeholder="e.g., sofas-couches" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="categoryStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <input type="hidden" id="categoryId">
+                <button type="submit" class="btn-primary">Save Category</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeProductModal()">&times;</span>
+            <h2 id="productModalTitle">Add Product</h2>
+            
+            <form onsubmit="saveProductData(event)">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="productDescription" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Price (Rs.)</label>
+                        <input type="number" id="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Original Price (Rs.)</label>
+                        <input type="number" id="productOriginalPrice">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="number" id="productStock" value="10" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Featured</label>
+                        <select id="productFeatured">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="productStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="productId">
+                <button type="submit" class="btn-primary">Save Product</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
