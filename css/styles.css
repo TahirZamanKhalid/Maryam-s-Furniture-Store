@@ -389,7 +389,9 @@ body.dark-theme .header {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(-45deg, #8B4513, #D2691E, #CD853F, #DEB887);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
     padding: 0;
     position: relative;
@@ -397,31 +399,42 @@ body.dark-theme .header {
     min-height: 500px;
 }
 
-.hero-video-container {
+.hero-background-animated {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(218, 165, 32, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(210, 180, 140, 0.15) 0%, transparent 50%);
+    animation: floatShapes 20s ease-in-out infinite;
     z-index: 0;
 }
 
-.hero-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
-.hero-video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.75), rgba(142, 68, 173, 0.75));
-    z-index: 1;
+@keyframes floatShapes {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    33% {
+        transform: translateY(-20px) scale(1.05);
+    }
+    66% {
+        transform: translateY(10px) scale(0.95);
+    }
 }
 
 .hero-slider {
@@ -445,36 +458,68 @@ body.dark-theme .header {
 }
 
 .hero-title {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
-    animation: slideInDown 1s ease;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: slideInDown 1s ease, textGlow 3s ease-in-out infinite;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+@keyframes textGlow {
+    0%, 100% {
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 20px rgba(218, 165, 32, 0.3);
+    }
+    50% {
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 30px rgba(218, 165, 32, 0.5);
+    }
 }
 
 .hero-subtitle {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     margin-bottom: 2rem;
     opacity: 0.95;
-    animation: slideInUp 1s ease;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    animation: slideInUp 1s ease, fadeInOut 4s ease-in-out infinite;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0.95;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
 .hero-btn {
-    padding: 12px 30px;
-    background: white;
-    color: var(--primary-color);
-    border: none;
-    border-radius: 25px;
+    padding: 14px 35px;
+    background: linear-gradient(135deg, #FFFFFF, #F5F5DC);
+    color: #8B4513;
+    border: 2px solid rgba(218, 165, 32, 0.3);
+    border-radius: 30px;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: var(--transition);
-    animation: slideInUp 1s ease 0.5s both;
+    transition: all 0.4s ease;
+    animation: slideInUp 1s ease 0.5s both, buttonPulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+@keyframes buttonPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .hero-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: translateY(-5px) scale(1.08);
+    box-shadow: 0 8px 25px rgba(218, 165, 32, 0.4);
+    background: linear-gradient(135deg, #F5F5DC, #FFFFFF);
+    border-color: rgba(218, 165, 32, 0.6);
 }
 
 /* Section Styles */
