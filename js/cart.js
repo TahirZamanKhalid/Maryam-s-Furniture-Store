@@ -49,19 +49,26 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load cart from Firebase
 async function loadCartFromFirebase(userId) {
     if (typeof database === 'undefined') {
+        console.warn('Database not initialized, using localStorage');
         loadCart(); // Fallback to localStorage
         return;
     }
-    
+
     try {
         const cartRef = database.ref(`users/${userId}/cart`);
         cartRef.on('value', (snapshot) => {
             const cartData = snapshot.val();
+            console.log('Cart data from Firebase:', cartData);
+
             if (cartData) {
                 cart = Object.values(cartData);
+                console.log('Cart items loaded:', cart.length, 'items');
             } else {
                 cart = [];
+                console.log('No cart items found in Firebase');
             }
+
+            console.log('Displaying cart with', cart.length, 'items');
             displayCart();
             updateCartCount();
         });
@@ -112,28 +119,40 @@ function displayCart() {
     const emptyCart = document.getElementById('emptyCart');
     const cartContent = document.getElementById('cartContent');
 
-    if (!cartItemsContainer || !emptyCart) return;
+    console.log('displayCart called:', {
+        cartItemsContainer: !!cartItemsContainer,
+        emptyCart: !!emptyCart,
+        cartContent: !!cartContent,
+        cartLength: cart.length
+    });
+
+    if (!cartItemsContainer) {
+        console.error('Cart items container not found!');
+        return;
+    }
 
     if (cart.length === 0) {
+        console.log('Showing empty cart message');
         if (emptyCart) emptyCart.style.display = 'block';
         if (cartContent) cartContent.style.display = 'none';
         return;
     }
 
+    console.log('Displaying', cart.length, 'cart items');
     if (emptyCart) emptyCart.style.display = 'none';
     if (cartContent) cartContent.style.display = 'block';
 
     cartItemsContainer.innerHTML = cart.map((item, index) => `
         <div class="cart-item animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
-            <img src="${item.image}"
+            <img src="${item.image || 'placeholder.jpg'}"
                  alt="${item.name}"
                  class="cart-item-image"
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23ddd%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23666%22%3E${item.name}%3C/text%3E%3C/svg%3E'">
+                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23ddd%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23666%22%3ENo Image%3C/text%3E%3C/svg%3E'">
             <div class="cart-item-details">
-                <h3 class="cart-item-name">${item.name}</h3>
-                <p class="cart-item-description">${item.description}</p>
+                <h3 class="cart-item-name">${item.name || 'Unknown Product'}</h3>
+                <p class="cart-item-description">${item.description || ''}</p>
                 <div>
-                    <span class="cart-item-price">Rs. ${item.price.toLocaleString()}</span>
+                    <span class="cart-item-price">Rs. ${(item.price || 0).toLocaleString()}</span>
                     ${item.originalPrice ? `<span class="cart-item-original-price">Rs. ${item.originalPrice.toLocaleString()}</span>` : ''}
                 </div>
             </div>
@@ -142,7 +161,7 @@ function displayCart() {
                     <button class="quantity-btn" onclick="decreaseQuantity(${index})">
                         <i class="fas fa-minus"></i>
                     </button>
-                    <span class="quantity-value">${item.quantity}</span>
+                    <span class="quantity-value">${item.quantity || 1}</span>
                     <button class="quantity-btn" onclick="increaseQuantity(${index})">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -154,6 +173,7 @@ function displayCart() {
         </div>
     `).join('');
 
+    console.log('Cart HTML updated');
     updateCartSummary();
 }
 
