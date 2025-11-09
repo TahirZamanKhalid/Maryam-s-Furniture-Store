@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadCategories();
             loadFeaturedProducts();
             loadProducts();
-            loadDeals();
             setupEventListeners();
             hideLoadingScreen();
         }, 500);
@@ -45,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCategories();
         loadFeaturedProducts();
         loadProducts();
-        loadDeals();
         setupEventListeners();
         hideLoadingScreen();
     }
