@@ -162,8 +162,10 @@ function initializeWebsite() {
 
     // Set up keyboard shortcut for admin login (Ctrl+Space)
     document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.key === ' ') {
+        // Check for Ctrl+Space (keyCode 32 or key ' ')
+        if (e.ctrlKey && (e.key === ' ' || e.keyCode === 32 || e.code === 'Space')) {
             e.preventDefault();
+            e.stopPropagation();
             // Redirect to dedicated admin login page
             window.location.href = 'admin-login.html';
         }
