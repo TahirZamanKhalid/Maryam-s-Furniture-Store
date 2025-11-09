@@ -511,3 +511,4 @@ window.addToCartFirebase = addToCartFirebase;
 window.toggleWishlist = toggleWishlist;
 window.logout = logout;
 window.showToast = showToast;
+window.updateUserInterface = updateUserInterface;

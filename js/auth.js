@@ -20,20 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check if user is already logged in on login.html
     if (window.location.pathname.includes('login.html')) {
+        // First, clear the justAuthenticated flag immediately when arriving at login.html
+        // This will be set again if they actually log in
+        setTimeout(() => {
+            sessionStorage.removeItem('justAuthenticated');
+        }, 100);
+
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // Wait a bit to ensure this isn't a fresh login
                 setTimeout(async () => {
-                    // Check if user just authenticated
+                    // Check if user just authenticated - if so, don't redirect
                     if (sessionStorage.getItem('justAuthenticated')) {
+                        // Clear the flag after checking
+                        sessionStorage.removeItem('justAuthenticated');
                         return;
                     }
-                    
+
                     // Check user role
                     const userRef = database.ref(`users/${user.uid}`);
                     const snapshot = await userRef.once('value');
                     const userData = snapshot.val();
-                    
+
                     if (userData && userData.role === 'admin') {
                         // Admin user - redirect to admin panel
                         showToast('Admin already logged in! Redirecting...', 'info');
@@ -47,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.location.href = 'index.html';
                         }, 1000);
                     }
-                }, 500);
+                }, 1000); // Increased delay to 1 second
             }
         });
     }
