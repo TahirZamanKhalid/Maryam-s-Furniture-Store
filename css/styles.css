@@ -718,6 +718,33 @@ body.dark-theme .header {
     box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
+.deal-timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    animation: timerPulse 2s ease-in-out infinite;
+}
+
+.deal-timer i {
+    font-size: 1rem;
+}
+
+@keyframes timerPulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        box-shadow: 0 2px 15px rgba(255, 107, 107, 0.6);
+    }
+}
+
 .product-actions,
 .deal-actions {
     display: flex;
