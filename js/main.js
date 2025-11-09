@@ -164,7 +164,8 @@ function initializeWebsite() {
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.key === ' ') {
             e.preventDefault();
-            openAdminLoginModal();
+            // Redirect to dedicated admin login page
+            window.location.href = 'admin-login.html';
         }
     });
 
@@ -368,77 +369,8 @@ function initAdCarousel() {
     }, 4000);
 }
 
-// Admin Login Modal
-function openAdminLoginModal() {
-    const modal = document.getElementById('adminLoginModal');
-    if (modal) {
-        modal.classList.add('active');
-    }
-}
-
-function closeAdminLoginModal() {
-    const modal = document.getElementById('adminLoginModal');
-    if (modal) {
-        modal.classList.remove('active');
-    }
-}
-
-function handleAdminLogin(event) {
-    event.preventDefault();
-
-    const email = document.getElementById('adminLoginEmail').value;
-    const password = document.getElementById('adminLoginPassword').value;
-
-    // Admin authentication with Firebase
-    if (typeof firebase !== 'undefined' && firebase.auth) {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                // Check if user is admin
-                const user = userCredential.user;
-                console.log('User authenticated:', user.uid);
-
-                firebase.database().ref('users/' + user.uid).once('value')
-                    .then((snapshot) => {
-                        const userData = snapshot.val();
-                        console.log('User data from database:', userData);
-
-                        if (userData && userData.role === 'admin') {
-                            showToast('Admin login successful!', 'success');
-                            // Redirect to admin dashboard
-                            setTimeout(() => {
-                                window.location.href = 'admin.html';
-                            }, 1000);
-                        } else {
-                            // If no user data exists, show helpful error
-                            if (!userData) {
-                                console.error('No user data found at path: users/' + user.uid);
-                                showToast('User data not found in database. Please create admin user with role="admin" at users/' + user.uid, 'error');
-                            } else if (!userData.role) {
-                                console.error('No role field found in user data:', userData);
-                                showToast('User role not set. Please add role="admin" field to user data', 'error');
-                            } else {
-                                console.error('User role is not admin:', userData.role);
-                                showToast('Access denied. Admin privileges required. Current role: ' + userData.role, 'error');
-                            }
-                            firebase.auth().signOut();
-                        }
-                    })
-                    .catch((dbError) => {
-                        console.error('Database error:', dbError);
-                        showToast('Database error: ' + dbError.message, 'error');
-                        firebase.auth().signOut();
-                    });
-            })
-            .catch((error) => {
-                console.error('Authentication error:', error);
-                showToast('Login failed: ' + error.message, 'error');
-            });
-    } else {
-        showToast('Firebase not configured', 'error');
-    }
-
-    return false;
-}
+// Admin login is now handled by dedicated admin-login.html page
+// Ctrl+Space redirects to admin-login.html
 
 // Password Toggle
 function togglePassword(inputId) {
@@ -770,16 +702,12 @@ function validateEmail(input) {
 window.onclick = function(event) {
     const shopTourModal = document.getElementById('shopTourModal');
     const categoryVideoModal = document.getElementById('categoryVideoModal');
-    const adminModal = document.getElementById('adminLoginModal');
 
     if (event.target === shopTourModal) {
         closeShopTour();
     }
     if (event.target === categoryVideoModal) {
         closeCategoryVideo();
-    }
-    if (event.target === adminModal) {
-        closeAdminLoginModal();
     }
 };
 

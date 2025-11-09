@@ -29,46 +29,45 @@ function checkAdminAuth() {
     <p style="margin-top: 1rem; color: #2c3e50; font-size: 1.1rem;">Verifying admin access...</p>
   `;
   document.body.appendChild(loadingOverlay);
-  
+
   auth.onAuthStateChanged(async (user) => {
       if (!user) {
           showToast('Please login as admin', 'error');
-          // Set flag to prevent redirect loop
-          sessionStorage.setItem('adminLoginRequired', 'true');
+          // Clear admin session flag
+          sessionStorage.removeItem('adminAuthenticated');
           setTimeout(() => {
-              window.location.href = 'login.html';
+              window.location.href = 'admin-login.html';
           }, 1000);
           return;
       }
-      
+
       try {
           // Get user data from database
           const userRef = database.ref(`users/${user.uid}`);
           const snapshot = await userRef.once('value');
           const userData = snapshot.val();
-          
+
           if (!userData || userData.role !== 'admin') {
               showToast('Access denied. Admin privileges required.', 'error');
               await auth.signOut();
-              sessionStorage.removeItem('adminLoginRequired');
+              sessionStorage.removeItem('adminAuthenticated');
               setTimeout(() => {
                   window.location.href = 'index.html';
               }, 1500);
               return;
           }
-          
+
           // Admin verified - load admin panel
           document.getElementById('adminEmail').textContent = user.email;
-          
+
           // Remove loading overlay
           if (loadingOverlay && loadingOverlay.parentNode) {
               loadingOverlay.remove();
           }
-          
-          // Clear any redirect flags
-          sessionStorage.removeItem('adminLoginRequired');
-          sessionStorage.removeItem('justAuthenticated');
-          
+
+          // Clear the admin authenticated flag (no longer needed)
+          sessionStorage.removeItem('adminAuthenticated');
+
           // Load admin data
           loadDashboardData();
           loadCategories();
@@ -77,12 +76,13 @@ function checkAdminAuth() {
           loadOrders();
           loadCustomers();
           loadSettings();
-          
+
       } catch (error) {
           console.error('Admin auth error:', error);
           showToast('Authentication error', 'error');
+          sessionStorage.removeItem('adminAuthenticated');
           setTimeout(() => {
-              window.location.href = 'login.html';
+              window.location.href = 'admin-login.html';
           }, 1500);
       }
   });

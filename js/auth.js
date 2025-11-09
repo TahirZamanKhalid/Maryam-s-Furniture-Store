@@ -18,11 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
         switchTab('signup');
     }
     
-    // Check if this is an admin login attempt
-    const adminLoginRequired = sessionStorage.getItem('adminLoginRequired');
-    
-    // Only check for existing login if NOT coming from admin redirect
-    if (!adminLoginRequired && window.location.pathname.includes('login.html')) {
+    // Check if user is already logged in on login.html
+    if (window.location.pathname.includes('login.html')) {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // Wait a bit to ensure this isn't a fresh login
@@ -114,10 +111,7 @@ async function handleLogin(event) {
         
         // Set flag to prevent redirect loop
         sessionStorage.setItem('justAuthenticated', 'true');
-        
-        // Clear admin login required flag
-        sessionStorage.removeItem('adminLoginRequired');
-        
+
         if (userData && userData.role === 'admin') {
             // Admin user - redirect to admin panel
             showToast('Admin login successful! Redirecting...', 'success');
