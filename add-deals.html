@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hardcoded Deals - Elite Furniture Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #8B4513;
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .deal-preview {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #8B4513;
+            border-radius: 5px;
+        }
+        .deal-preview h3 {
+            margin-top: 0;
+            color: #8B4513;
+        }
+        .deal-preview p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .price {
+            font-weight: bold;
+            color: #D2691E;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Hardcoded Deals to Database</h1>
+        <p style="text-align: center; color: #666;">Click the button below to add 3 premium furniture deals to your database.</p>
+
+        <div class="deal-preview">
+            <h3>Deal 1: Luxury Leather Sofa Set</h3>
+            <p><strong>Category:</strong> Sofas</p>
+            <p><strong>Description:</strong> Premium 3-seater leather sofa with matching armchairs. Perfect for modern living rooms.</p>
+            <p class="price">Original: Rs. 85,000 → Deal Price: Rs. 65,000 (24% OFF)</p>
+            <p><strong>Stock:</strong> 5 units</p>
+        </div>
+
+        <div class="deal-preview">
+            <h3>Deal 2: Royal Dining Table Set</h3>
+            <p><strong>Category:</strong> Tables</p>
+            <p><strong>Description:</strong> Elegant 6-seater dining table with solid wood construction and cushioned chairs.</p>
+            <p class="price">Original: Rs. 65,000 → Deal Price: Rs. 48,000 (26% OFF)</p>
+            <p><strong>Stock:</strong> 8 units</p>
+        </div>
+
+        <div class="deal-preview">
+            <h3>Deal 3: Modern Bedroom Suite</h3>
+            <p><strong>Category:</strong> Beds</p>
+            <p><strong>Description:</strong> Complete bedroom set including king-size bed, 2 side tables, and wardrobe with mirror.</p>
+            <p class="price">Original: Rs. 120,000 → Deal Price: Rs. 89,000 (26% OFF)</p>
+            <p><strong>Stock:</strong> 3 units</p>
+        </div>
+
+        <button onclick="addDeals()" id="addBtn">Add These Deals to Database</button>
+
+        <div id="status"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        const deals = [
+            {
+                name: "Luxury Leather Sofa Set",
+                category: "Sofas",
+                description: "Premium 3-seater leather sofa with matching armchairs. Perfect for modern living rooms. High-quality genuine leather upholstery with sturdy wooden frame.",
+                originalPrice: 85000,
+                price: 65000,
+                stock: 5,
+                image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop&q=80",
+                status: "active"
+            },
+            {
+                name: "Royal Dining Table Set",
+                category: "Tables",
+                description: "Elegant 6-seater dining table with solid wood construction and cushioned chairs. Features beautiful carved details and premium fabric seating.",
+                originalPrice: 65000,
+                price: 48000,
+                stock: 8,
+                image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&h=600&fit=crop&q=80",
+                status: "active"
+            },
+            {
+                name: "Modern Bedroom Suite",
+                category: "Beds",
+                description: "Complete bedroom set including king-size bed, 2 side tables, and wardrobe with mirror. Contemporary design with ample storage space.",
+                originalPrice: 120000,
+                price: 89000,
+                stock: 3,
+                image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=600&fit=crop&q=80",
+                status: "active"
+            }
+        ];
+
+        async function addDeals() {
+            const statusDiv = document.getElementById('status');
+            const btn = document.getElementById('addBtn');
+
+            btn.disabled = true;
+            btn.textContent = 'Adding deals...';
+            statusDiv.style.display = 'none';
+
+            try {
+                if (typeof database === 'undefined') {
+                    throw new Error('Firebase database not initialized');
+                }
+
+                const dealsRef = database.ref('deals');
+                let addedCount = 0;
+
+                for (const deal of deals) {
+                    const newDealRef = dealsRef.push();
+                    const dealData = {
+                        ...deal,
+                        id: newDealRef.key,
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                        startTime: Date.now(),
+                        endTime: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days from now
+                    };
+
+                    await newDealRef.set(dealData);
+                    addedCount++;
+                    console.log(`Deal ${addedCount} added:`, dealData.name);
+                }
+
+                statusDiv.className = 'success';
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `<strong>Success!</strong> ${addedCount} deals have been added to the database successfully.`;
+                btn.textContent = 'Deals Added Successfully ✓';
+                btn.style.background = '#28a745';
+
+            } catch (error) {
+                console.error('Error adding deals:', error);
+                statusDiv.className = 'error';
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `<strong>Error!</strong> ${error.message}`;
+                btn.disabled = false;
+                btn.textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+</html>
