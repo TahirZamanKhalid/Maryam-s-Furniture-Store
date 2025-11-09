@@ -399,8 +399,10 @@ async function addToCartFirebase(productId) {
                 id: productId,
                 name: product.name,
                 price: product.price,
+                originalPrice: product.originalPrice || null,
                 image: product.images?.[0] || 'placeholder.jpg',
                 description: product.description || '',
+                category: product.category || '',
                 quantity: 1,
                 addedAt: Date.now()
             });
