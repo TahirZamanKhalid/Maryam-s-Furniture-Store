@@ -104,15 +104,7 @@ function setupEventListeners() {
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.code === 'Space') {
             e.preventDefault();
-            openAdminLoginModal();
-        }
-    });
-    
-    // Close admin modal when clicking outside
-    document.addEventListener('click', function(e) {
-        const adminModal = document.getElementById('adminLoginModal');
-        if (adminModal && e.target === adminModal) {
-            closeAdminLoginModal();
+            window.location.href = 'admin-login.html';
         }
     });
 }
@@ -740,121 +732,6 @@ function closeProductModal() {
     modal.classList.remove('active');
 }
 
-// Admin Login Modal Functions
-function openAdminLoginModal() {
-    const modal = document.getElementById('adminLoginModal');
-    if (modal) {
-        modal.classList.add('active');
-        // Clear form
-        document.getElementById('adminLoginEmail').value = '';
-        document.getElementById('adminLoginPassword').value = '';
-    }
-}
-
-function closeAdminLoginModal() {
-    const modal = document.getElementById('adminLoginModal');
-    if (modal) {
-        modal.classList.remove('active');
-    }
-}
-
-function toggleAdminPassword() {
-    const passwordInput = document.getElementById('adminLoginPassword');
-    const toggleBtn = passwordInput.nextElementSibling;
-    const icon = toggleBtn.querySelector('i');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-}
-
-// Handle admin login
-async function handleAdminLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('adminLoginEmail').value.trim();
-    const password = document.getElementById('adminLoginPassword').value;
-    
-    // Show loading state
-    const submitBtn = event.target.querySelector('.btn-submit');
-    const originalContent = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-    submitBtn.disabled = true;
-    
-    try {
-        // Sign in with email and password
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        // Check if user is admin
-        const userRef = database.ref(`users/${user.uid}`);
-        const snapshot = await userRef.once('value');
-        const userData = snapshot.val();
-        
-        if (!userData || userData.role !== 'admin') {
-            showToast('Access denied. Admin privileges required.', 'error');
-            await auth.signOut();
-            submitBtn.innerHTML = originalContent;
-            submitBtn.disabled = false;
-            return;
-        }
-        
-        // Update last login
-        await userRef.update({
-            lastLogin: Date.now()
-        });
-        
-        showToast('Admin login successful! Redirecting...', 'success');
-        
-        // Set flag to prevent redirect loops
-        sessionStorage.setItem('justAuthenticated', 'true');
-        sessionStorage.removeItem('adminLoginRequired');
-        
-        // Close modal
-        closeAdminLoginModal();
-        
-        // Redirect to admin panel
-        setTimeout(() => {
-            window.location.href = 'admin.html';
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Admin login error:', error);
-        
-        let errorMessage = 'Login failed. Please try again.';
-        
-        switch (error.code) {
-            case 'auth/user-not-found':
-                errorMessage = 'No account found with this email address.';
-                break;
-            case 'auth/wrong-password':
-                errorMessage = 'Incorrect password. Please try again.';
-                break;
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email address format.';
-                break;
-            case 'auth/user-disabled':
-                errorMessage = 'This account has been disabled.';
-                break;
-            case 'auth/too-many-requests':
-                errorMessage = 'Too many failed attempts. Please try again later.';
-                break;
-        }
-        
-        showToast(errorMessage, 'error');
-        
-        // Reset button
-        submitBtn.innerHTML = originalContent;
-        submitBtn.disabled = false;
-    }
-}
-
 // Export functions
 window.toggleTheme = toggleTheme;
 window.toggleMobileMenu = toggleMobileMenu;
@@ -871,8 +748,4 @@ window.openProductModal = openProductModal;
 window.closeProductModal = closeProductModal;
 window.scrollToSection = scrollToSection;
 window.addDealToCart = addDealToCart;
-window.openAdminLoginModal = openAdminLoginModal;
-window.closeAdminLoginModal = closeAdminLoginModal;
-window.toggleAdminPassword = toggleAdminPassword;
-window.handleAdminLogin = handleAdminLogin;
 window.updateCategoryProductCounts = updateCategoryProductCounts;
