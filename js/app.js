@@ -623,26 +623,59 @@ function goToCart() {
 }
 
 // Submit contact form
-function submitContactForm(event) {
+async function submitContactForm(event) {
     event.preventDefault();
-    
+
     const form = event.target;
-    const formData = new FormData(form);
-    
-    // In a real app, send this to server
-    showToast('Thank you for your message! We will get back to you soon.', 'success');
-    form.reset();
-    
-    // Save to Firebase
-    if (database) {
-        const contactRef = database.ref('contacts').push();
-        contactRef.set({
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            message: formData.get('message'),
-            timestamp: Date.now()
-        });
+    const submitBtn = form.querySelector('.submit-btn');
+    const originalBtnContent = submitBtn.innerHTML;
+
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
+
+    try {
+        // Check if EmailJS is configured
+        if (typeof emailjs !== 'undefined' && emailConfig && emailConfig.publicKey !== 'YOUR_PUBLIC_KEY') {
+            // Send email using EmailJS
+            const response = await emailjs.sendForm(
+                emailConfig.serviceId,
+                emailConfig.templateId,
+                form
+            );
+
+            console.log('Email sent successfully:', response);
+            showToast('Thank you for your message! We will get back to you soon.', 'success');
+        } else {
+            // EmailJS not configured, show warning
+            console.warn('EmailJS not configured. Please set up email-config.js');
+            showToast('Message saved! Email notification is not configured yet.', 'info');
+        }
+
+        // Save to Firebase
+        if (database) {
+            const formData = new FormData(form);
+            const contactRef = database.ref('contacts').push();
+            await contactRef.set({
+                name: formData.get('from_name'),
+                email: formData.get('from_email'),
+                phone: formData.get('phone'),
+                message: formData.get('message'),
+                timestamp: Date.now(),
+                status: 'new'
+            });
+        }
+
+        // Reset form
+        form.reset();
+
+    } catch (error) {
+        console.error('Error sending message:', error);
+        showToast('Failed to send message. Please try again or contact us directly.', 'error');
+    } finally {
+        // Restore button
+        submitBtn.innerHTML = originalBtnContent;
+        submitBtn.disabled = false;
     }
 }
 
