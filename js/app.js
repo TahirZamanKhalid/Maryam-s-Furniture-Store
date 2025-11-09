@@ -8,6 +8,24 @@ let productsPerPage = 12;
 let currentPage = 1;
 let isDarkTheme = localStorage.getItem('theme') === 'dark';
 
+// Wrapper function for add to cart (calls Firebase function)
+function addToCart(productId) {
+    if (typeof addToCartFirebase === 'function') {
+        addToCartFirebase(productId);
+    } else {
+        console.error('addToCartFirebase function not available');
+        showToast('Please login to add items to cart', 'warning');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
+    }
+}
+
+// Function to go to cart page
+function goToCart() {
+    window.location.href = 'cart.html';
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     // Wait for Firebase to be ready

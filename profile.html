@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Profile - Maryam's Furniture Shop">
+    <title>My Profile - Maryam's Furniture Shop</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' x='50' text-anchor='middle' font-size='60'%3E👤%3C/text%3E%3C/svg%3E">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-couch"></i>
+                <span>Maryam's Furniture</span>
+            </a>
+
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+
+                <button class="cart-btn" onclick="window.location.href='cart.html'" title="Shopping Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Shop</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Container -->
+    <div class="auth-container" style="padding: 2rem 1rem;">
+        <div class="profile-container" style="max-width: 900px; margin: 0 auto;">
+            <h1 style="text-align: center; margin-bottom: 2rem;">
+                <i class="fas fa-user-circle"></i> My Profile
+            </h1>
+
+            <!-- Profile Tabs -->
+            <div class="profile-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e0e0e0;">
+                <button class="profile-tab active" onclick="switchProfileTab('info')" data-tab="info">
+                    <i class="fas fa-user"></i> Personal Info
+                </button>
+                <button class="profile-tab" onclick="switchProfileTab('security')" data-tab="security">
+                    <i class="fas fa-lock"></i> Security
+                </button>
+                <button class="profile-tab" onclick="switchProfileTab('preferences')" data-tab="preferences">
+                    <i class="fas fa-cog"></i> Preferences
+                </button>
+            </div>
+
+            <!-- Personal Info Tab -->
+            <div id="infoTab" class="profile-tab-content active">
+                <div class="auth-card">
+                    <h2><i class="fas fa-user"></i> Personal Information</h2>
+
+                    <form id="profileForm" onsubmit="updateProfile(event)">
+                        <div class="form-group">
+                            <label for="profileName">
+                                <i class="fas fa-user"></i> Full Name
+                            </label>
+                            <input type="text" id="profileName" placeholder="Your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileEmail">
+                                <i class="fas fa-envelope"></i> Email Address
+                            </label>
+                            <input type="email" id="profileEmail" placeholder="your.email@example.com" disabled>
+                            <small style="color: #666; font-size: 0.85rem;">Email cannot be changed</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profilePhone">
+                                <i class="fas fa-phone"></i> Phone Number
+                            </label>
+                            <input type="tel" id="profilePhone" placeholder="+92 300 1234567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileAddress">
+                                <i class="fas fa-map-marker-alt"></i> Address
+                            </label>
+                            <textarea id="profileAddress" rows="3" placeholder="Your delivery address"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="securityTab" class="profile-tab-content">
+                <div class="auth-card">
+                    <h2><i class="fas fa-lock"></i> Change Password</h2>
+
+                    <form id="passwordForm" onsubmit="changePassword(event)">
+                        <div class="form-group">
+                            <label for="currentPassword">
+                                <i class="fas fa-lock"></i> Current Password
+                            </label>
+                            <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">
+                                <i class="fas fa-key"></i> New Password
+                            </label>
+                            <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6">
+                            <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmNewPassword">
+                                <i class="fas fa-key"></i> Confirm New Password
+                            </label>
+                            <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required minlength="6">
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmNewPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <span class="error-message" id="passwordMatchError"></span>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-key"></i> Update Password
+                        </button>
+                    </form>
+
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+                        <h3><i class="fas fa-shield-alt"></i> Account Actions</h3>
+                        <button class="btn-submit" onclick="sendVerificationEmail()" style="background: #17a2b8; margin-top: 1rem;">
+                            <i class="fas fa-envelope-circle-check"></i> Resend Verification Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences Tab -->
+            <div id="preferencesTab" class="profile-tab-content">
+                <div class="auth-card">
+                    <h2><i class="fas fa-cog"></i> Account Preferences</h2>
+
+                    <div class="preference-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e0e0e0;">
+                        <div>
+                            <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-moon"></i> Theme</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Choose your preferred color scheme</p>
+                        </div>
+                        <button class="theme-toggle" onclick="toggleTheme()" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-moon" id="themeIconPref"></i>
+                            <span id="themeText">Dark Mode</span>
+                        </button>
+                    </div>
+
+                    <div class="preference-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e0e0e0;">
+                        <div>
+                            <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-bell"></i> Email Notifications</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Receive updates about your orders</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="emailNotifications" checked onchange="updatePreference('emailNotifications', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="preference-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+                        <div>
+                            <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-tags"></i> Promotional Emails</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Get notified about special offers and deals</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="promotionalEmails" onchange="updatePreference('promotionalEmails', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <h4><i class="fas fa-info-circle"></i> Account Information</h4>
+                        <p style="margin: 0.5rem 0;"><strong>Member Since:</strong> <span id="memberSince">Loading...</span></p>
+                        <p style="margin: 0.5rem 0;"><strong>Last Login:</strong> <span id="lastLogin">Loading...</span></p>
+                        <p style="margin: 0.5rem 0;"><strong>Email Verified:</strong> <span id="emailVerified">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/profile.js"></script>
+
+    <style>
+        .profile-tabs {
+            flex-wrap: wrap;
+        }
+        .profile-tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .profile-tab:hover {
+            color: var(--primary-color);
+            background: rgba(52, 152, 219, 0.05);
+        }
+        .profile-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 600;
+        }
+        .profile-tab-content {
+            display: none;
+        }
+        .profile-tab-content.active {
+            display: block;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</body>
+</html>
