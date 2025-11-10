@@ -50,6 +50,9 @@
             <a href="#customers" class="nav-item" onclick="switchAdminTab('customers')">
                 <i class="fas fa-users"></i> Customers
             </a>
+            <a href="#team" class="nav-item" onclick="switchAdminTab('team')">
+                <i class="fas fa-user-tie"></i> Team
+            </a>
             <a href="#settings" class="nav-item" onclick="switchAdminTab('settings')">
                 <i class="fas fa-sliders-h"></i> Settings
             </a>
@@ -283,7 +286,37 @@
                 </table>
             </div>
         </section>
-        
+
+        <!-- Team Section -->
+        <section id="teamSection" class="admin-section">
+            <div class="section-header">
+                <h1><i class="fas fa-user-tie"></i> Team Management</h1>
+                <button onclick="openTeamModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Team Member
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Bio</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamList">
+                        <tr>
+                            <td colspan="6" class="text-center">Loading team members...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- Settings Section -->
         <section id="settingsSection" class="admin-section">
             <h1><i class="fas fa-sliders-h"></i> Store Settings</h1>
@@ -523,6 +556,69 @@
 
                 <input type="hidden" id="dealId">
                 <button type="submit" class="btn-primary">Save Deal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Team Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTeamModal()">&times;</span>
+            <h2 id="teamModalTitle">Add Team Member</h2>
+
+            <form onsubmit="saveTeamData(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="teamName" required placeholder="e.g., John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label>Position</label>
+                    <input type="text" id="teamPosition" required placeholder="e.g., CEO, Marketing Manager">
+                </div>
+
+                <div class="form-group">
+                    <label>Photo URL</label>
+                    <input type="url" id="teamPhoto" placeholder="https://example.com/photo.jpg">
+                    <small style="color: #666; font-size: 0.85rem;">Leave empty to use default placeholder</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="teamBio" rows="4" placeholder="Brief description about the team member..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>LinkedIn URL (Optional)</label>
+                    <input type="url" id="teamLinkedin" placeholder="https://linkedin.com/in/username">
+                </div>
+
+                <div class="form-group">
+                    <label>Twitter URL (Optional)</label>
+                    <input type="url" id="teamTwitter" placeholder="https://twitter.com/username">
+                </div>
+
+                <div class="form-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" id="teamEmail" placeholder="email@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Display Order</label>
+                    <input type="number" id="teamOrder" value="0" min="0">
+                    <small style="color: #666; font-size: 0.85rem;">Lower numbers appear first</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="teamStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="teamId">
+                <button type="submit" class="btn-primary">Save Team Member</button>
             </form>
         </div>
     </div>

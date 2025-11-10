@@ -95,12 +95,17 @@ function switchAdminTab(tab) {
       item.classList.remove('active');
   });
   event.target.classList.add('active');
-  
+
   // Update sections
   document.querySelectorAll('.admin-section').forEach(section => {
       section.classList.remove('active');
   });
   document.getElementById(`${tab}Section`).classList.add('active');
+
+  // Load data for specific tabs
+  if (tab === 'team') {
+      loadTeamMembers();
+  }
 }
 
 // Load dashboard data
@@ -880,6 +885,206 @@ async function loadCurrentLocation() {
   }
 }
 
+// ============================================
+// TEAM MANAGEMENT FUNCTIONS
+// ============================================
+
+// Load team members
+async function loadTeamMembers() {
+  try {
+      const snapshot = await database.ref('team').orderByChild('order').once('value');
+      const teamList = document.getElementById('teamList');
+      teamList.innerHTML = '';
+
+      if (!snapshot.exists()) {
+          teamList.innerHTML = '<tr><td colspan="6" class="text-center">No team members found</td></tr>';
+          return;
+      }
+
+      const teamMembers = [];
+      snapshot.forEach((childSnapshot) => {
+          teamMembers.push({
+              id: childSnapshot.key,
+              ...childSnapshot.val()
+          });
+      });
+
+      teamMembers.forEach(member => {
+          const row = document.createElement('tr');
+
+          // Photo
+          const photoTd = document.createElement('td');
+          if (member.photoURL && member.photoURL.trim() !== '') {
+              photoTd.innerHTML = `<img src="${member.photoURL}" alt="${member.name}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">`;
+          } else {
+              photoTd.innerHTML = '<i class="fas fa-user" style="font-size: 2rem; color: #ccc;"></i>';
+          }
+
+          // Name
+          const nameTd = document.createElement('td');
+          nameTd.textContent = member.name;
+
+          // Position
+          const positionTd = document.createElement('td');
+          positionTd.textContent = member.position;
+
+          // Bio (truncated)
+          const bioTd = document.createElement('td');
+          const bioText = member.bio || '';
+          bioTd.textContent = bioText.length > 50 ? bioText.substring(0, 50) + '...' : bioText;
+          bioTd.style.maxWidth = '200px';
+
+          // Status
+          const statusTd = document.createElement('td');
+          const statusBadge = document.createElement('span');
+          statusBadge.className = `badge ${member.status === 'active' ? 'badge-success' : 'badge-danger'}`;
+          statusBadge.textContent = member.status === 'active' ? 'Active' : 'Inactive';
+          statusTd.appendChild(statusBadge);
+
+          // Actions
+          const actionsTd = document.createElement('td');
+          actionsTd.innerHTML = `
+              <button onclick="editTeam('${member.id}')" class="btn-edit" title="Edit">
+                  <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteTeam('${member.id}')" class="btn-delete" title="Delete">
+                  <i class="fas fa-trash"></i>
+              </button>
+          `;
+
+          row.appendChild(photoTd);
+          row.appendChild(nameTd);
+          row.appendChild(positionTd);
+          row.appendChild(bioTd);
+          row.appendChild(statusTd);
+          row.appendChild(actionsTd);
+
+          teamList.appendChild(row);
+      });
+
+  } catch (error) {
+      console.error('Error loading team members:', error);
+      showToast('Failed to load team members', 'error');
+  }
+}
+
+// Open team modal
+function openTeamModal(teamId = null) {
+  const modal = document.getElementById('teamModal');
+  const title = document.getElementById('teamModalTitle');
+
+  if (teamId) {
+      title.textContent = 'Edit Team Member';
+      loadTeamData(teamId);
+  } else {
+      title.textContent = 'Add Team Member';
+      document.getElementById('teamId').value = '';
+      document.getElementById('teamName').value = '';
+      document.getElementById('teamPosition').value = '';
+      document.getElementById('teamPhoto').value = '';
+      document.getElementById('teamBio').value = '';
+      document.getElementById('teamLinkedin').value = '';
+      document.getElementById('teamTwitter').value = '';
+      document.getElementById('teamEmail').value = '';
+      document.getElementById('teamOrder').value = '0';
+      document.getElementById('teamStatus').value = 'active';
+  }
+
+  modal.style.display = 'block';
+}
+
+// Close team modal
+function closeTeamModal() {
+  document.getElementById('teamModal').style.display = 'none';
+}
+
+// Load team data for editing
+async function loadTeamData(teamId) {
+  try {
+      const snapshot = await database.ref(`team/${teamId}`).once('value');
+      const member = snapshot.val();
+
+      if (member) {
+          document.getElementById('teamId').value = teamId;
+          document.getElementById('teamName').value = member.name || '';
+          document.getElementById('teamPosition').value = member.position || '';
+          document.getElementById('teamPhoto').value = member.photoURL || '';
+          document.getElementById('teamBio').value = member.bio || '';
+          document.getElementById('teamLinkedin').value = member.socialLinks?.linkedin || '';
+          document.getElementById('teamTwitter').value = member.socialLinks?.twitter || '';
+          document.getElementById('teamEmail').value = member.socialLinks?.email || '';
+          document.getElementById('teamOrder').value = member.order || 0;
+          document.getElementById('teamStatus').value = member.status || 'active';
+      }
+  } catch (error) {
+      console.error('Error loading team member:', error);
+      showToast('Failed to load team member data', 'error');
+  }
+}
+
+// Edit team member
+function editTeam(teamId) {
+  openTeamModal(teamId);
+}
+
+// Delete team member
+async function deleteTeam(teamId) {
+  if (!confirm('Are you sure you want to delete this team member?')) {
+      return;
+  }
+
+  try {
+      await database.ref(`team/${teamId}`).remove();
+      showToast('Team member deleted successfully', 'success');
+      loadTeamMembers();
+  } catch (error) {
+      console.error('Error deleting team member:', error);
+      showToast('Failed to delete team member', 'error');
+  }
+}
+
+// Save team data
+async function saveTeamData(event) {
+  event.preventDefault();
+
+  const teamId = document.getElementById('teamId').value;
+  const teamData = {
+      name: document.getElementById('teamName').value.trim(),
+      position: document.getElementById('teamPosition').value.trim(),
+      photoURL: document.getElementById('teamPhoto').value.trim(),
+      bio: document.getElementById('teamBio').value.trim(),
+      socialLinks: {
+          linkedin: document.getElementById('teamLinkedin').value.trim(),
+          twitter: document.getElementById('teamTwitter').value.trim(),
+          email: document.getElementById('teamEmail').value.trim()
+      },
+      order: parseInt(document.getElementById('teamOrder').value) || 0,
+      status: document.getElementById('teamStatus').value,
+      updatedAt: Date.now()
+  };
+
+  try {
+      if (teamId) {
+          // Update existing team member
+          await database.ref(`team/${teamId}`).update(teamData);
+          showToast('Team member updated successfully', 'success');
+      } else {
+          // Create new team member
+          const newTeamRef = database.ref('team').push();
+          teamData.id = newTeamRef.key;
+          teamData.createdAt = Date.now();
+          await newTeamRef.set(teamData);
+          showToast('Team member added successfully', 'success');
+      }
+
+      closeTeamModal();
+      loadTeamMembers();
+  } catch (error) {
+      console.error('Error saving team member:', error);
+      showToast('Failed to save team member', 'error');
+  }
+}
+
 // Export all functions
 window.switchAdminTab = switchAdminTab;
 window.openCategoryModal = openCategoryModal;
@@ -907,6 +1112,11 @@ window.searchCustomers = searchCustomers;
 window.updateStoreSettings = updateStoreSettings;
 window.updateLocationSettings = updateLocationSettings;
 window.loadCurrentLocation = loadCurrentLocation;
+window.openTeamModal = openTeamModal;
+window.closeTeamModal = closeTeamModal;
+window.editTeam = editTeam;
+window.deleteTeam = deleteTeam;
+window.saveTeamData = saveTeamData;
 window.exportData = exportData;
 window.clearCache = clearCache;
 window.toggleMaintenanceMode = toggleMaintenanceMode;
