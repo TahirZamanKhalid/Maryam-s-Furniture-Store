@@ -760,6 +760,15 @@
                 });
         }
 
+        // Check URL parameters for tab switching
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab === 'signup') {
+                switchTab('signup');
+            }
+        });
+
         // Check if user is already logged in
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
