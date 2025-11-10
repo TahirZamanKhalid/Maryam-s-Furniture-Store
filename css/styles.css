@@ -308,13 +308,15 @@ body.dark-theme .header {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 280px;
+    width: 320px;
     height: 100%;
     background: white;
     box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     z-index: 2000;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .mobile-menu.active {
@@ -329,26 +331,102 @@ body.dark-theme .header {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--text-color);
+    color: white;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu .close-menu:hover {
+    color: #f0f0f0;
+    transform: rotate(90deg);
+}
+
+.mobile-menu-header {
+    padding: 2rem 1.5rem 1rem;
+    background: linear-gradient(135deg, #8B4513, #D2691E);
+    color: white;
+}
+
+.mobile-menu-header h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
 }
 
 .mobile-menu ul {
     list-style: none;
-    padding: 4rem 0 2rem;
+    padding: 1rem 0;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .mobile-menu ul li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 1rem 1.5rem;
     color: var(--text-color);
     text-decoration: none;
     border-bottom: 1px solid var(--border-color);
     transition: var(--transition);
+    font-size: 16px;
+}
+
+.mobile-menu ul li a i {
+    font-size: 18px;
+    color: #8B4513;
+    width: 24px;
 }
 
 .mobile-menu ul li a:hover {
-    background: var(--light-color);
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(210, 105, 30, 0.05));
     padding-left: 2rem;
+}
+
+.mobile-menu-actions {
+    padding: 1.5rem;
+    border-top: 2px solid var(--border-color);
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mobile-login-btn,
+.mobile-signup-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.mobile-login-btn {
+    background: white;
+    color: #8B4513;
+    border: 2px solid #8B4513;
+}
+
+.mobile-login-btn:hover {
+    background: #8B4513;
+    color: white;
+}
+
+.mobile-signup-btn {
+    background: linear-gradient(135deg, #8B4513, #D2691E);
+    color: white;
+}
+
+.mobile-signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
 }
 
 /* User Dropdown */

@@ -146,14 +146,24 @@
         <button class="close-menu" onclick="toggleMobileMenu()">
             <i class="fas fa-times"></i>
         </button>
+        <div class="mobile-menu-header">
+            <h3>Menu</h3>
+        </div>
         <ul>
-            <li><a href="#home" onclick="toggleMobileMenu()">Home</a></li>
-            <li><a href="#categories" onclick="toggleMobileMenu()">Categories</a></li>
-            <li><a href="#products" onclick="toggleMobileMenu()">Products</a></li>
-            <li><a href="#deals" onclick="toggleMobileMenu()">Deals</a></li>
-            <li><a href="#about" onclick="toggleMobileMenu()">About Us</a></li>
-            <li><a href="#contact" onclick="toggleMobileMenu()">Contact</a></li>
+            <li><a href="#home" onclick="toggleMobileMenu()"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#categories" onclick="toggleMobileMenu()"><i class="fas fa-list"></i> Categories</a></li>
+            <li><a href="#products" onclick="toggleMobileMenu()"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="#about" onclick="toggleMobileMenu()"><i class="fas fa-info-circle"></i> About Us</a></li>
+            <li><a href="#contact" onclick="toggleMobileMenu()"><i class="fas fa-envelope"></i> Contact</a></li>
         </ul>
+        <div class="mobile-menu-actions">
+            <button class="mobile-login-btn" onclick="goToLogin()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button class="mobile-signup-btn" onclick="goToSignup()">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </div>
     </div>
 
     <!-- Hero Section -->

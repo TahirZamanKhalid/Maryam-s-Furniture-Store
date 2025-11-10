@@ -817,6 +817,21 @@ function openLoyaltyProgram() {
     showToast('🎉 Loyalty Program: Earn 1 point for every Rs. 100 spent!', 'success');
 }
 
+// Navigation Functions for Mobile Menu
+function goToLogin() {
+    toggleMobileMenu();
+    setTimeout(() => {
+        window.location.href = 'client-login.html';
+    }, 300);
+}
+
+function goToSignup() {
+    toggleMobileMenu();
+    setTimeout(() => {
+        window.location.href = 'client-login.html?tab=signup';
+    }, 300);
+}
+
 // Export functions
 window.toggleTheme = toggleTheme;
 window.toggleMobileMenu = toggleMobileMenu;
@@ -840,3 +855,5 @@ window.openSpecialOffers = openSpecialOffers;
 window.openWishlist = openWishlist;
 window.openSupport = openSupport;
 window.openLoyaltyProgram = openLoyaltyProgram;
+window.goToLogin = goToLogin;
+window.goToSignup = goToSignup;
