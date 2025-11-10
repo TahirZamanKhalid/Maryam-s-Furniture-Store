@@ -120,15 +120,10 @@
             <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
             <li><a href="careers.html"><i class="fas fa-briefcase"></i> Careers</a></li>
             <li><a href="#contact" onclick="toggleMobileMenu()"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            <li class="menu-divider"></li>
+            <li><a href="client-login.html" onclick="goToLogin()"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="client-login.html?tab=signup" onclick="goToSignup()"><i class="fas fa-user-plus"></i> Sign Up</a></li>
         </ul>
-        <div class="mobile-menu-actions">
-            <button class="mobile-login-btn" onclick="goToLogin()">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-            <button class="mobile-signup-btn" onclick="goToSignup()">
-                <i class="fas fa-user-plus"></i> Sign Up
-            </button>
-        </div>
     </div>
 
     <!-- Hero Section -->
@@ -187,6 +182,35 @@
             <div class="ad-placeholder ad-horizontal">
                 <i class="fas fa-ad"></i>
                 <p>Advertisement Placement (728x90)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deals Section -->
+    <section id="deals" class="deals-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span>🔥 Hot Deals</span>
+                <div class="title-line"></div>
+            </h2>
+            <p class="section-subtitle">Limited time offers on premium furniture</p>
+
+            <div class="deals-grid" id="dealsGrid">
+                <div class="product-skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
+                <div class="product-skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
+                <div class="product-skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
             </div>
         </div>
     </section>

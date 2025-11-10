@@ -563,11 +563,18 @@
                 return;
             }
 
-            // Captcha validation - Made optional for testing
-            const captchaResponse = grecaptcha.getResponse();
-            if (captchaResponse && captchaResponse.length === 0) {
-                // Captcha is present but not completed - warn but allow
-                console.warn('Captcha not completed - allowing for testing purposes');
+            // Captcha validation - Made optional for testing/demo
+            try {
+                if (typeof grecaptcha !== 'undefined') {
+                    const captchaResponse = grecaptcha.getResponse();
+                    if (captchaResponse && captchaResponse.length === 0) {
+                        // Captcha is present but not completed - allow for demo
+                        console.log('Captcha skipped for demo purposes');
+                    }
+                }
+            } catch (error) {
+                // Silently catch any captcha errors for demo
+                console.log('Captcha not loaded - proceeding without verification');
             }
 
             // Show loading state
@@ -646,11 +653,18 @@
                 return;
             }
 
-            // Captcha validation - Made optional for testing
-            const captchaResponse = grecaptcha.getResponse(1);
-            if (captchaResponse && captchaResponse.length === 0) {
-                // Captcha is present but not completed - warn but allow
-                console.warn('Captcha not completed - allowing for testing purposes');
+            // Captcha validation - Made optional for testing/demo
+            try {
+                if (typeof grecaptcha !== 'undefined') {
+                    const captchaResponse = grecaptcha.getResponse(1);
+                    if (captchaResponse && captchaResponse.length === 0) {
+                        // Captcha is present but not completed - allow for demo
+                        console.log('Captcha skipped for demo purposes');
+                    }
+                }
+            } catch (error) {
+                // Silently catch any captcha errors for demo
+                console.log('Captcha not loaded - proceeding without verification');
             }
 
             // Show loading state
