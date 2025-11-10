@@ -253,12 +253,19 @@ body.dark-theme .header {
 
 /* Mobile Menu Button */
 .mobile-menu-btn {
-    display: none;
+    display: block;
     background: transparent;
     border: none;
     font-size: 1.5rem;
     color: var(--primary-color);
     cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+}
+
+.mobile-menu-btn:hover {
+    color: var(--secondary-color);
+    transform: scale(1.1);
 }
 
 /* Navigation */
