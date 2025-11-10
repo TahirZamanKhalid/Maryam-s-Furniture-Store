@@ -829,6 +829,57 @@ async function saveDealData(event) {
   }
 }
 
+// Location Management Functions
+async function updateLocationSettings(event) {
+  event.preventDefault();
+
+  const lat = parseFloat(document.getElementById('locationLat').value);
+  const lng = parseFloat(document.getElementById('locationLng').value);
+  const address = document.getElementById('locationAddress').value.trim();
+
+  if (!lat || !lng || !address) {
+      showToast('Please fill in all location fields', 'error');
+      return;
+  }
+
+  const locationData = {
+      lat: lat,
+      lng: lng,
+      address: address,
+      updatedAt: Date.now()
+  };
+
+  try {
+      await database.ref('settings/location').set(locationData);
+      showToast('Location updated successfully!', 'success');
+  } catch (error) {
+      console.error('Error updating location:', error);
+      showToast('Failed to update location', 'error');
+  }
+}
+
+async function loadCurrentLocation() {
+  try {
+      const snapshot = await database.ref('settings/location').once('value');
+      const location = snapshot.val();
+
+      if (location) {
+          document.getElementById('locationLat').value = location.lat || '';
+          document.getElementById('locationLng').value = location.lng || '';
+          document.getElementById('locationAddress').value = location.address || '';
+          showToast('Current location loaded', 'success');
+      } else {
+          showToast('No location data found. Using defaults.', 'info');
+          document.getElementById('locationLat').value = '24.8607';
+          document.getElementById('locationLng').value = '67.0011';
+          document.getElementById('locationAddress').value = 'Karachi, Pakistan';
+      }
+  } catch (error) {
+      console.error('Error loading location:', error);
+      showToast('Failed to load location', 'error');
+  }
+}
+
 // Export all functions
 window.switchAdminTab = switchAdminTab;
 window.openCategoryModal = openCategoryModal;
@@ -854,6 +905,8 @@ window.filterOrders = filterOrders;
 window.deleteCustomer = deleteCustomer;
 window.searchCustomers = searchCustomers;
 window.updateStoreSettings = updateStoreSettings;
+window.updateLocationSettings = updateLocationSettings;
+window.loadCurrentLocation = loadCurrentLocation;
 window.exportData = exportData;
 window.clearCache = clearCache;
 window.toggleMaintenanceMode = toggleMaintenanceMode;
