@@ -754,6 +754,69 @@ function closeProductModal() {
     modal.classList.remove('active');
 }
 
+// Right Drawer Functions
+function toggleRightDrawer() {
+    const drawer = document.getElementById('rightDrawer');
+    drawer.classList.toggle('active');
+}
+
+function openTrackOrder() {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        showToast('Please login to track your orders', 'info');
+        setTimeout(() => {
+            window.location.href = 'client-login.html';
+        }, 1000);
+        return;
+    }
+    toggleRightDrawer();
+    window.location.href = 'orders.html';
+}
+
+function openSpecialOffers() {
+    toggleRightDrawer();
+    showToast('Check out our amazing deals!', 'success');
+    setTimeout(() => {
+        scrollToSection('products');
+    }, 500);
+}
+
+function openWishlist() {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        showToast('Please login to view your wishlist', 'info');
+        setTimeout(() => {
+            window.location.href = 'client-login.html';
+        }, 1000);
+        return;
+    }
+    toggleRightDrawer();
+    showToast('Loading your wishlist...', 'info');
+    // Could redirect to wishlist page if it exists
+    // window.location.href = 'wishlist.html';
+}
+
+function openSupport() {
+    toggleRightDrawer();
+    showToast('Redirecting to support section...', 'info');
+    setTimeout(() => {
+        scrollToSection('contact');
+    }, 500);
+}
+
+function openLoyaltyProgram() {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        showToast('Please login to access loyalty rewards', 'info');
+        setTimeout(() => {
+            window.location.href = 'client-login.html';
+        }, 1000);
+        return;
+    }
+    toggleRightDrawer();
+    showToast('🎉 Loyalty Program: Earn 1 point for every Rs. 100 spent!', 'success');
+}
+
 // Export functions
 window.toggleTheme = toggleTheme;
 window.toggleMobileMenu = toggleMobileMenu;
@@ -771,3 +834,9 @@ window.closeProductModal = closeProductModal;
 window.scrollToSection = scrollToSection;
 window.addDealToCart = addDealToCart;
 window.updateCategoryProductCounts = updateCategoryProductCounts;
+window.toggleRightDrawer = toggleRightDrawer;
+window.openTrackOrder = openTrackOrder;
+window.openSpecialOffers = openSpecialOffers;
+window.openWishlist = openWishlist;
+window.openSupport = openSupport;
+window.openLoyaltyProgram = openLoyaltyProgram;
