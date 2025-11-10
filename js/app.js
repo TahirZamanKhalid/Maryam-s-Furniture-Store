@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
             loadCategories();
             loadFeaturedProducts();
+            loadDeals();
             loadProducts();
             setupEventListeners();
             hideLoadingScreen();
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeApp();
         loadCategories();
         loadFeaturedProducts();
+        loadDeals();
         loadProducts();
         setupEventListeners();
         hideLoadingScreen();
