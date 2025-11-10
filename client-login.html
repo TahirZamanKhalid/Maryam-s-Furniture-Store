@@ -6,6 +6,8 @@
     <title>Elite Furniture Gallery - Login</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         * {
             margin: 0;
@@ -322,6 +324,17 @@
             opacity: 0.9;
         }
 
+        .captcha-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .g-recaptcha {
+            transform: scale(0.95);
+            transform-origin: 0 0;
+        }
+
         @media (max-width: 768px) {
             .content {
                 flex-direction: column;
@@ -385,7 +398,11 @@
                     <div class="forgot-password">
                         <a href="#" onclick="showForgotPasswordModal(event)">Forgot Password?</a>
                     </div>
-                    
+
+                    <div class="captcha-container">
+                        <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                    </div>
+
                     <button type="submit" class="auth-btn" id="loginBtn">Sign In</button>
 
                     <div class="divider">
@@ -450,7 +467,11 @@
                         <input type="text" id="signupCity" placeholder="Enter your city" required>
                         <small id="signupCityError"></small>
                     </div>
-                    
+
+                    <div class="captcha-container">
+                        <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                    </div>
+
                     <button type="submit" class="auth-btn" id="signupBtn">Create Account</button>
 
                     <div class="divider">
@@ -542,6 +563,13 @@
                 return;
             }
 
+            // Captcha validation
+            const captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse || captchaResponse.length === 0) {
+                showNotification('Please complete the captcha verification', 'error');
+                return;
+            }
+
             // Show loading state
             loginBtn.disabled = true;
             loginBtn.textContent = 'Signing in...';
@@ -572,6 +600,7 @@
                 .catch((error) => {
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Sign In';
+                    grecaptcha.reset(); // Reset captcha on error
 
                     let errorMessage = 'Login failed';
                     if (error.code === 'auth/user-not-found') {
@@ -616,6 +645,13 @@
                 return;
             }
 
+            // Captcha validation
+            const captchaResponse = grecaptcha.getResponse(1); // 1 is the widget ID for the second captcha
+            if (!captchaResponse || captchaResponse.length === 0) {
+                showNotification('Please complete the captcha verification', 'error');
+                return;
+            }
+
             // Show loading state
             signupBtn.disabled = true;
             signupBtn.textContent = 'Creating Account...';
@@ -654,6 +690,7 @@
                 .catch((error) => {
                     signupBtn.disabled = false;
                     signupBtn.textContent = 'Create Account';
+                    grecaptcha.reset(1); // Reset captcha on error (widget ID 1 for signup form)
 
                     let errorMessage = 'Signup failed';
                     if (error.code === 'auth/email-already-in-use') {
