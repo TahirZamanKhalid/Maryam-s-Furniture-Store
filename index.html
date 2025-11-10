@@ -75,36 +75,40 @@
     <!-- Header -->
     <header class="header">
         <div class="header-container">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+
             <div class="logo">
                 <i class="fas fa-couch"></i>
                 <span>Elite Furniture Gallery</span>
             </div>
-            
+
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search furniture..." onkeypress="if(event.key==='Enter') searchProducts()">
                 <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
             </div>
-            
+
             <div class="header-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
-                
+
                 <button class="cart-btn" id="cartBtn" onclick="goToCart()" title="Shopping Cart" style="display: none;">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count" id="cartCount">0</span>
                 </button>
-                
+
                 <div class="user-section" id="userSection">
-                    <button class="login-btn" id="loginBtn" onclick="window.location.href='login.html'" style="display: flex;">
+                    <button class="login-btn" id="loginBtn" onclick="window.location.href='client-login.html'" style="display: flex;">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Login</span>
                     </button>
-                    <button class="signup-btn" id="signupBtn" onclick="window.location.href='login.html?tab=signup'" style="display: flex;">
+                    <button class="signup-btn" id="signupBtn" onclick="window.location.href='client-login.html?tab=signup'" style="display: flex;">
                         <i class="fas fa-user-plus"></i>
                         <span>Sign Up</span>
                     </button>
-                    
+
                     <div class="user-menu" id="userMenu" style="display: none; visibility: hidden;">
                         <button class="user-btn" onclick="toggleUserDropdown()">
                             <i class="fas fa-user-circle"></i>
@@ -119,10 +123,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
         </div>
     </header>

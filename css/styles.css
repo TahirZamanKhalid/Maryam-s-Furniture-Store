@@ -253,12 +253,27 @@ body.dark-theme .header {
 
 /* Mobile Menu Button */
 .mobile-menu-btn {
-    display: none;
+    display: block;
     background: transparent;
     border: none;
     font-size: 1.5rem;
     color: var(--primary-color);
     cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    margin-right: 1rem;
+    order: -1;
+}
+
+.mobile-menu-btn:hover {
+    color: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        margin-right: 0.5rem;
+    }
 }
 
 /* Navigation */
@@ -307,12 +322,12 @@ body.dark-theme .header {
 .mobile-menu {
     position: fixed;
     top: 0;
-    right: -100%;
+    left: -100%;
     width: 320px;
     height: 100%;
     background: white;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    transition: right 0.3s ease;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
     z-index: 2000;
     overflow-y: auto;
     display: flex;
@@ -320,7 +335,7 @@ body.dark-theme .header {
 }
 
 .mobile-menu.active {
-    right: 0;
+    left: 0;
 }
 
 .mobile-menu .close-menu {
