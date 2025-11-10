@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Elite Furniture Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .faq-hero {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 4rem 0 3rem;
+            text-align: center;
+        }
+
+        .faq-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .faq-hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .faq-section {
+            padding: 3rem 0;
+            background: #f8f9fa;
+        }
+
+        .faq-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #f8f9fa;
+        }
+
+        .faq-question i {
+            color: #8B4513;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 1.5rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .faq-answer.active {
+            max-height: 500px;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .faq-category {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            color: #8B4513;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-box {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .contact-box h3 {
+            margin-bottom: 1rem;
+        }
+
+        .contact-box p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-box button {
+            background: white;
+            color: #8B4513;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .faq-hero h1 {
+                font-size: 2rem;
+            }
+
+            .faq-question {
+                font-size: 1rem;
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <i class="fas fa-couch"></i>
+                <span>Elite Furniture Gallery</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="categories.html">Categories</a>
+                <a href="products.html">Products</a>
+                <a href="team.html">Team</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <button onclick="window.location.href='cart.html'" class="icon-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <button onclick="checkAuthAndRedirect()" class="btn-primary" id="authBtn">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3>Quick Links</h3>
+            <button class="close-menu" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul>
+            <li><a href="team.html"><i class="fas fa-users"></i> Our Team</a></li>
+            <li><a href="privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+            <li><a href="terms.html"><i class="fas fa-file-contract"></i> Terms & Conditions</a></li>
+            <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+            <li><a href="careers.html"><i class="fas fa-briefcase"></i> Careers</a></li>
+            <li><a href="index.html#contact"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        </ul>
+    </div>
+
+    <!-- FAQ Hero -->
+    <section class="faq-hero">
+        <div class="container">
+            <h1><i class="fas fa-question-circle"></i> Frequently Asked Questions</h1>
+            <p>Find answers to common questions about our products and services</p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-content">
+                <!-- Orders & Shipping -->
+                <div class="faq-category">
+                    <h2 class="category-title">
+                        <i class="fas fa-shipping-fast"></i>
+                        Orders & Shipping
+                    </h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            How long does delivery take?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Standard delivery typically takes 7-14 business days within Pakistan. Express delivery options
+                            are available for 3-5 business days. Delivery times may vary based on your location and product
+                            availability. You'll receive tracking information once your order ships.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Do you offer free shipping?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Yes! We offer free standard shipping on orders over Rs. 50,000 within major cities. For orders
+                            below this amount, standard shipping charges apply. Check our shipping policy at checkout for
+                            detailed rates.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Can I track my order?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Absolutely! Once your order ships, you'll receive a confirmation email with a tracking number.
+                            You can also track your order by logging into your account and visiting the "My Orders" section.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Returns & Refunds -->
+                <div class="faq-category">
+                    <h2 class="category-title">
+                        <i class="fas fa-undo-alt"></i>
+                        Returns & Refunds
+                    </h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            What is your return policy?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            We offer a 30-day return policy for most items. Products must be in their original condition
+                            with all tags and packaging intact. Custom-made or personalized items are not eligible for returns.
+                            Contact our customer service team to initiate a return.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            How long do refunds take?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Once we receive your returned item, refunds are processed within 5-7 business days. The refund
+                            will be credited to your original payment method. Please allow additional time for your bank
+                            to process the refund.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            What if my item arrives damaged?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            We're sorry if your item arrives damaged. Please contact us within 48 hours of delivery with
+                            photos of the damage. We'll arrange for a replacement or full refund at no additional cost to you.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div class="faq-category">
+                    <h2 class="category-title">
+                        <i class="fas fa-couch"></i>
+                        Products
+                    </h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Do you offer assembly services?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Yes, we offer professional assembly services for most furniture items at an additional cost.
+                            You can add assembly service during checkout. Our trained technicians will assemble your
+                            furniture and remove packaging materials.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Can I customize furniture?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            We offer customization options on select furniture pieces, including fabric choices, colors,
+                            and dimensions. Contact our customer service team or visit our showroom to discuss your
+                            customization needs. Custom orders typically take 4-6 weeks.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Do you have a warranty?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Yes, all our furniture comes with a manufacturer's warranty. The warranty period varies by
+                            product (typically 1-5 years) and covers manufacturing defects. Extended warranty options
+                            are available for purchase.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="faq-category">
+                    <h2 class="category-title">
+                        <i class="fas fa-credit-card"></i>
+                        Payment
+                    </h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            What payment methods do you accept?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            We accept multiple payment methods including credit/debit cards (Visa, MasterCard), bank transfers,
+                            cash on delivery (COD), and digital wallets. All online payments are processed securely through
+                            encrypted payment gateways.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Is it safe to shop on your website?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Absolutely! We use industry-standard SSL encryption to protect your personal and payment information.
+                            We never store your complete credit card details on our servers. Your security and privacy are
+                            our top priorities.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            Do you offer installment plans?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            Yes, we offer flexible installment plans on purchases over Rs. 30,000. You can choose from 3, 6,
+                            or 12-month installment options. Contact our sales team for more details on terms and conditions.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Box -->
+                <div class="contact-box">
+                    <h3><i class="fas fa-headset"></i> Still have questions?</h3>
+                    <p>Our customer support team is here to help you!</p>
+                    <button onclick="window.location.href='index.html#contact'">
+                        <i class="fas fa-envelope"></i> Contact Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-couch"></i> Elite Furniture Gallery</h3>
+                    <p>Your trusted partner in creating beautiful living spaces with premium furniture.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="categories.html">Categories</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> +92 XXX XXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> info@elitefurniture.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Elite Furniture Gallery. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        function toggleFAQ(element) {
+            // Close all other FAQs
+            document.querySelectorAll('.faq-question').forEach(q => {
+                if (q !== element) {
+                    q.classList.remove('active');
+                    q.nextElementSibling.classList.remove('active');
+                }
+            });
+
+            // Toggle clicked FAQ
+            element.classList.toggle('active');
+            element.nextElementSibling.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

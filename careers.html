@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers - Elite Furniture Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .careers-hero {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 4rem 0 3rem;
+            text-align: center;
+        }
+
+        .careers-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .careers-hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .careers-section {
+            padding: 3rem 0;
+            background: #f8f9fa;
+        }
+
+        .careers-content {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #8B4513;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-text {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .job-listing {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .job-listing:hover {
+            border-color: #8B4513;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.1);
+        }
+
+        .job-title {
+            color: #8B4513;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .job-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .apply-btn {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .benefit-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-title {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .careers-hero h1 {
+                font-size: 2rem;
+            }
+
+            .careers-content {
+                padding: 1.5rem;
+            }
+
+            .job-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <i class="fas fa-couch"></i>
+                <span>Elite Furniture Gallery</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="categories.html">Categories</a>
+                <a href="products.html">Products</a>
+                <a href="team.html">Team</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <button onclick="window.location.href='cart.html'" class="icon-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <button onclick="checkAuthAndRedirect()" class="btn-primary" id="authBtn">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3>Quick Links</h3>
+            <button class="close-menu" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul>
+            <li><a href="team.html"><i class="fas fa-users"></i> Our Team</a></li>
+            <li><a href="privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+            <li><a href="terms.html"><i class="fas fa-file-contract"></i> Terms & Conditions</a></li>
+            <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+            <li><a href="careers.html"><i class="fas fa-briefcase"></i> Careers</a></li>
+            <li><a href="index.html#contact"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        </ul>
+    </div>
+
+    <!-- Careers Hero -->
+    <section class="careers-hero">
+        <div class="container">
+            <h1><i class="fas fa-briefcase"></i> Join Our Team</h1>
+            <p>Build your career with Elite Furniture Gallery and help us create beautiful spaces for our customers</p>
+        </div>
+    </section>
+
+    <!-- Careers Section -->
+    <section class="careers-section">
+        <div class="container">
+            <div class="careers-content">
+                <h2 class="section-title">
+                    <i class="fas fa-heart"></i>
+                    Why Work With Us?
+                </h2>
+                <p class="section-text">
+                    At Elite Furniture Gallery, we believe in creating an environment where talent thrives and innovation flourishes.
+                    Join our passionate team dedicated to providing exceptional furniture and outstanding customer service.
+                    We offer competitive benefits, growth opportunities, and a supportive work culture.
+                </p>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="benefit-title">Competitive Salary</div>
+                        <div class="benefit-text">Market-leading compensation packages</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="benefit-title">Growth Opportunities</div>
+                        <div class="benefit-text">Career advancement and skill development</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon"><i class="fas fa-heart"></i></div>
+                        <div class="benefit-title">Health Benefits</div>
+                        <div class="benefit-text">Comprehensive healthcare coverage</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon"><i class="fas fa-clock"></i></div>
+                        <div class="benefit-title">Flexible Hours</div>
+                        <div class="benefit-text">Work-life balance initiatives</div>
+                    </div>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 3rem;">
+                    <i class="fas fa-briefcase"></i>
+                    Current Openings
+                </h2>
+
+                <div class="job-listing">
+                    <div class="job-title">Sales Associate</div>
+                    <div class="job-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</span>
+                        <span><i class="fas fa-clock"></i> Full-time</span>
+                        <span><i class="fas fa-money-bill"></i> Competitive</span>
+                    </div>
+                    <div class="job-description">
+                        We're looking for enthusiastic sales associates to join our showroom team. Responsibilities include
+                        assisting customers, product knowledge, and maintaining showroom presentation. Excellent communication
+                        skills and passion for furniture design required.
+                    </div>
+                    <button class="apply-btn" onclick="window.location.href='index.html#contact'">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                </div>
+
+                <div class="job-listing">
+                    <div class="job-title">Warehouse Manager</div>
+                    <div class="job-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</span>
+                        <span><i class="fas fa-clock"></i> Full-time</span>
+                        <span><i class="fas fa-money-bill"></i> Competitive</span>
+                    </div>
+                    <div class="job-description">
+                        Seeking an experienced warehouse manager to oversee inventory, logistics, and team coordination.
+                        Must have 3+ years of experience in warehouse operations, strong organizational skills, and
+                        knowledge of inventory management systems.
+                    </div>
+                    <button class="apply-btn" onclick="window.location.href='index.html#contact'">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                </div>
+
+                <div class="job-listing">
+                    <div class="job-title">Customer Service Representative</div>
+                    <div class="job-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</span>
+                        <span><i class="fas fa-clock"></i> Full-time</span>
+                        <span><i class="fas fa-money-bill"></i> Competitive</span>
+                    </div>
+                    <div class="job-description">
+                        Join our customer service team to provide exceptional support to our clients. Handle inquiries,
+                        resolve issues, and ensure customer satisfaction. Strong communication skills and problem-solving
+                        abilities essential.
+                    </div>
+                    <button class="apply-btn" onclick="window.location.href='index.html#contact'">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 3rem;">
+                    <i class="fas fa-envelope"></i>
+                    Don't See Your Role?
+                </h2>
+                <p class="section-text">
+                    We're always looking for talented individuals to join our team. Send us your resume and cover letter
+                    to <strong>careers@elitefurniture.com</strong> or use our contact form, and we'll keep your application
+                    on file for future opportunities.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-couch"></i> Elite Furniture Gallery</h3>
+                    <p>Your trusted partner in creating beautiful living spaces with premium furniture.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="categories.html">Categories</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="team.html">Team</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> +92 XXX XXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> info@elitefurniture.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Elite Furniture Gallery. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
