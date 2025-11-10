@@ -765,6 +765,18 @@
 
         // Handle social sign in
         function handleSocialSignIn(provider, providerName) {
+            // Check if running from file:// protocol
+            if (window.location.protocol === 'file:') {
+                showNotification('⚠️ Social login requires a web server. Please run: python -m http.server 8000 and open http://localhost:8000', 'error');
+                setTimeout(() => {
+                    if (confirm('Social login needs a local server.\n\nClick OK to see instructions on how to run the website correctly.')) {
+                        // Show instructions
+                        alert('To use social login:\n\n1. Open Command Prompt\n2. Navigate to your project folder\n3. Run: python -m http.server 8000\n4. Open browser: http://localhost:8000\n\nSee HOW_TO_RUN.md for detailed instructions.');
+                    }
+                }, 500);
+                return;
+            }
+
             firebase.auth().signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
@@ -799,7 +811,12 @@
 
                     let errorMessage = `${providerName} sign-in failed`;
 
-                    if (error.code === 'auth/popup-closed-by-user') {
+                    if (error.code === 'auth/operation-not-supported-in-this-environment') {
+                        errorMessage = '⚠️ Please run the website on a local server (http://localhost) instead of opening files directly. See HOW_TO_RUN.md';
+                        setTimeout(() => {
+                            alert('Social login requires running on a web server.\n\nQuick Fix:\n1. Open Command Prompt\n2. cd to your project folder\n3. Run: python -m http.server 8000\n4. Open: http://localhost:8000');
+                        }, 1000);
+                    } else if (error.code === 'auth/popup-closed-by-user') {
                         errorMessage = 'Sign-in popup was closed. Please try again.';
                     } else if (error.code === 'auth/account-exists-with-different-credential') {
                         errorMessage = 'An account already exists with this email using a different sign-in method.';
