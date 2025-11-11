@@ -29,7 +29,8 @@
 - User authentication (Email/Password and Google OAuth)
 - Product browsing with categories
 - Shopping cart functionality
-- Order management system
+- **Wishlist functionality** - Save favorite products for later
+- **Order management system** - Track all orders in real-time
 - Admin dashboard for managing products, categories, orders, and team
 - User profile management
 - Interactive map showing store location
@@ -38,6 +39,8 @@
 - Team management system
 - Hot deals section
 - Responsive design for mobile and desktop
+
+**All data is fetched from Firebase Realtime Database in real-time!**
 
 ---
 
@@ -105,6 +108,8 @@ Maryam-s-Furniture-Store/
 ├── client-login.html          # Login and signup page
 ├── profile.html               # User profile page
 ├── cart.html                  # Shopping cart page
+├── wishlist.html              # User wishlist page (saves favorite products)
+├── orders.html                # User orders page (track all orders)
 ├── products.html              # Products listing page
 ├── categories.html            # Categories page
 ├── admin-dashboard.html       # Admin panel
@@ -122,6 +127,8 @@ Maryam-s-Furniture-Store/
 │   ├── app.js                 # Main application logic for index.html
 │   ├── auth.js                # Authentication helper functions
 │   ├── admin-auth.js          # Admin authentication
+│   ├── orders.js              # Orders page functionality
+│   ├── wishlist.js            # Wishlist functionality (embedded in wishlist.html)
 │   ├── admin.js               # Admin dashboard functionality
 │   ├── cart.js                # Shopping cart functionality
 │   ├── email-config.js        # EmailJS configuration
@@ -135,10 +142,11 @@ Maryam-s-Furniture-Store/
 │   ├── images/                # Product images, logos, banners
 │   └── videos/                # Hero video for homepage
 │
-├── database.rules.json        # Firebase security rules
-├── MASTER_GUIDE.md           # This comprehensive guide
-├── EmailJS_Setup_Guide.md    # Guide for setting up EmailJS
-└── README.md                 # Project overview
+├── database.rules.json           # Firebase security rules
+├── MASTER_GUIDE.md              # This comprehensive guide
+├── EMAIL_SETUP_GUIDE.md         # Guide for setting up EmailJS
+├── FIREBASE_HOSTING_GUIDE.md    # Complete guide for deploying to Firebase
+└── README.md                    # Project overview
 ```
 
 ---
@@ -544,7 +552,178 @@ furniture-shop-aa5fb-default-rtdb/
 
 ---
 
-### **5. products.html** - Products Listing Page
+### **5. wishlist.html** - User Wishlist Page
+
+**Purpose:** Displays user's saved favorite products for later purchase.
+
+**Features:**
+- Beautiful gradient design with heart theme
+- Real-time wishlist updates from Firebase
+- Product cards with images, prices, and actions
+- Add to cart directly from wishlist
+- Remove from wishlist functionality
+- Wishlist statistics (total items, total value)
+- Empty state with call-to-action
+- Loading skeleton while fetching data
+
+**Connected JavaScript:**
+- JavaScript is embedded in the HTML file (for simplicity)
+
+**Key JavaScript Functions:**
+
+1. **`checkAuth()`** - Verifies user is logged in
+   - Redirects to login if not authenticated
+   - Calls `loadWishlist()` if logged in
+
+2. **`loadWishlist(userId)`** - Fetches wishlist from Firebase
+   - Listens to `users/{uid}/wishlist` in real-time
+   - Fetches full product details from `products` node
+   - Merges wishlist data with product details
+   - Sorts by date added (newest first)
+   - Calls `displayWishlist()` to show items
+
+3. **`displayWishlist()`** - Renders wishlist items
+   - Shows empty state if no items
+   - Creates product cards with images, prices
+   - Adds "Remove" and "Add to Cart" buttons
+   - Updates statistics
+
+4. **`updateStats()`** - Updates wishlist statistics
+   - Calculates total items count
+   - Calculates total value of all items
+   - Updates stats display
+
+5. **`removeFromWishlist(productId)`** - Removes item from wishlist
+   - Deletes from Firebase: `users/{uid}/wishlist/{productId}`
+   - Shows success notification
+   - UI updates automatically (real-time listener)
+
+6. **`addToCartFromWishlist(productId)`** - Adds wishlist item to cart
+   - Finds product in wishlist
+   - Checks if already in cart
+   - If in cart: increases quantity
+   - If not in cart: adds new item
+   - Updates Firebase cart
+   - Shows success notification
+
+7. **`viewProduct(productId)`** - Views product details
+   - Redirects to main page with product filter
+   - Could be enhanced to show product modal
+
+**Firebase Functions Used:**
+- `database.ref('users/' + uid + '/wishlist').on('value')` - Real-time wishlist listener
+- `database.ref('products').once('value')` - Fetch all product details
+- `database.ref('users/' + uid + '/wishlist/' + productId).remove()` - Remove from wishlist
+- `database.ref('users/' + uid + '/cart/' + productId).set()` - Add to cart
+- `database.ref('users/' + uid + '/cart/' + productId).update()` - Update cart quantity
+
+**Why Real-time?**
+The wishlist uses `.on('value')` instead of `.once('value')`, which means:
+- Any changes to wishlist update instantly
+- If you add/remove items on another device, this page updates automatically
+- No need to refresh the page
+
+---
+
+### **6. orders.html** - User Orders Page
+
+**Purpose:** Displays all orders placed by the user with tracking and management features.
+
+**Features:**
+- Filter orders by status (All, Pending, Processing, Shipped, Delivered, Cancelled)
+- Real-time order updates from Firebase
+- Order cards with all details
+- View full order details modal
+- Cancel pending orders
+- Reorder delivered orders
+- Order status tracking
+- Order history sorted by date
+
+**Connected JavaScript File:**
+- `js/orders.js` - All orders functionality
+
+**Key JavaScript Functions:**
+
+1. **`checkAuth()`** - Verifies user authentication
+   - Redirects to login if not logged in
+   - Calls `loadOrders()` when authenticated
+
+2. **`loadOrders(userId)`** - Fetches orders from Firebase
+   - Listens to `users/{uid}/orders` in real-time
+   - Converts to array and sorts by date (newest first)
+   - Calls `displayOrders()` to render
+
+3. **`displayOrders()`** - Renders order cards
+   - Filters orders based on currentFilter
+   - Shows empty state if no orders
+   - Creates order cards with:
+     - Order ID and date
+     - Status badge with icon
+     - Items list with images
+     - Total amount
+     - Action buttons (View, Cancel, Reorder, Track)
+
+4. **`filterOrders(status)`** - Filters by order status
+   - Updates currentFilter variable
+   - Updates active tab styling
+   - Re-renders display with filtered orders
+
+5. **`getStatusIcon(status)`** - Returns icon for status
+   - Pending: Clock icon
+   - Processing: Spinning cog
+   - Shipped: Truck icon
+   - Delivered: Check circle
+   - Cancelled: X circle
+
+6. **`formatStatus(status)`** - Capitalizes status text
+   - "pending" → "Pending"
+
+7. **`viewOrderDetails(orderId)`** - Shows full order details
+   - Finds order in allOrders array
+   - Generates detailed HTML with:
+     - Order info (ID, date, status, payment method)
+     - Delivery address
+     - All order items with images
+     - Order summary (subtotal, delivery fee, discount, total)
+   - Shows modal with all information
+
+8. **`closeOrderDetails()`** - Closes order details modal
+   - Hides modal by removing 'active' class
+
+9. **`reorderItems(orderId)`** - Adds all items from order to cart
+   - Finds order by ID
+   - Loops through order items
+   - Adds each item to cart using `addToCartFirebase()`
+   - Shows success message
+   - Redirects to cart page
+
+10. **`cancelOrder(orderId)`** - Cancels a pending order
+    - Shows confirmation dialog
+    - Updates order status to 'cancelled' in Firebase
+    - Adds cancelledAt timestamp
+    - Shows success notification
+
+11. **`trackOrder(orderId)`** - Order tracking (placeholder)
+    - Currently shows "coming soon" message
+    - Can be enhanced with real tracking integration
+
+**Firebase Functions Used:**
+- `database.ref('users/' + uid + '/orders').on('value')` - Real-time orders listener
+- `database.ref('users/' + uid + '/orders/' + orderId).update()` - Update order status
+
+**Order Statuses:**
+- **Pending** - Order placed, awaiting processing
+- **Processing** - Order is being prepared
+- **Shipped** - Order is on the way
+- **Delivered** - Order successfully delivered
+- **Cancelled** - Order was cancelled
+
+**Real-time Updates:**
+When admin changes order status in admin dashboard, the user's orders page updates automatically without refresh!
+
+---
+
+### **7. products.html** - Products Listing Page
 
 **Purpose:** Shows all available furniture products with filtering and search.
 
